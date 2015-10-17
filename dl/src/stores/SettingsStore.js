@@ -14,9 +14,9 @@ class SettingsStore {
         this.exportPublicMethods({getSetting: this.getSetting.bind(this)});
 
         this.settings = Immutable.Map({
-            locale: "en",
-            connection: "wss://bitshares.openledger.info/ws",
-            faucet_address: "https://bitshares.openledger.info",
+            locale: "cn",
+            connection: "wss://bitshares.dacplay.org/ws"
+            faucet_address: "https://bts2faucet.dacplay.org",
             unit: CORE_ASSET,
             showSettles: false,
             walletLockTimeout: 60 * 10,
@@ -95,8 +95,8 @@ class SettingsStore {
             ],
             connection: [
                 "wss://bitshares.openledger.info/ws",
-                "wss://bitshares.dacplay.org:8089/ws",
-                "wss://dele-puppy.com/ws"
+                "wss://dele-puppy.com/ws",
+                "wss://bitshares.dacplay.org/ws"
             ],
             unit: [
                 CORE_ASSET,
@@ -278,7 +278,7 @@ class SettingsStore {
     // onChangeBase(payload) {
     //     if (payload.index && payload.value) {
     //         this.preferredBases = this.preferredBases.set(payload.index, payload.value);
-    //         this._lsSet("preferredBases", this.preferredBases.toArray);                    
+    //         this._lsSet("preferredBases", this.preferredBases.toArray);
     //     }
     // }
 }
