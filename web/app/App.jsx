@@ -342,3 +342,7 @@ let routes = (
 
 ReactDOM.render(<Router history={history} routes={routes}/>, document.getElementById("content"));
 
+// enable HTML5 history API
+// Router.run(routes, Router.HistoryLocation, function (Handler) {
+//     React.render(<Handler/>, document.getElementById("content"));
+// });
