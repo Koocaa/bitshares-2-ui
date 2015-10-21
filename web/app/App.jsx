@@ -227,6 +227,14 @@ class Auth extends React.Component {
 }
 
 let willTransitionTo = (nextState, replaceState, callback) => {
+    //check referer
+    let query = nextState.location.query;
+    console.log("willTransitionTo", query);
+    if (query["r"] && cookies && cookies.enabled) {
+        console.log(`writing referer info: ${query["r"]}`);
+        cookies.set("graphene_d_r", query["r"], { expires: 604800 });
+    }
+
     if (nextState.location.pathname === "/init-error") {
         var db = iDB.init_instance(window.openDatabase ? (shimIndexedDB || indexedDB) : indexedDB).init_promise
         db.then(() => {
