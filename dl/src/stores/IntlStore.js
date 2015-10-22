@@ -3,9 +3,9 @@ var IntlActions = require("../actions/IntlActions");
 var BaseStore = require("./BaseStore");
 var counterpart = require("counterpart-instance");
 var cookies = require("cookies-js");
-var locale_cn = require("assets/locales/locale-cn");
-counterpart.registerTranslations("cn", locale_cn);
-counterpart.setFallbackLocale("cn");
+var locale_en = require("assets/locales/locale-en");
+counterpart.registerTranslations("en", locale_en);
+counterpart.setFallbackLocale("en");
 
 import {addLocaleData} from 'react-intl';
 import en from 'react-intl/lib/locale-data/en';
@@ -28,9 +28,20 @@ addLocaleData(tr);
 class IntlStore extends BaseStore {
     constructor() {
         super();
-        this.currentLocale = cookies.get("graphene_locale") || "cn";
-        this.locales = ["cn"];
-        this.localesObject = {cn: locale_cn};
+
+        this.localesObject = {"en": locale_en};
+        this.locales = ["en","cn","fr","ko","de","es","tr"];
+
+        let defaultLang = (window.navigator.language || window.navigator.userLanguage).toLowerCase().replace(/-.*/,'');
+        if (defaultLang == "zh") {
+            defaultLang = "cn";
+        }
+
+        if (!this.hasLocale(defaultLang)) {
+            defaultLang = "en";
+        }
+
+        this.onSwitchLocale(defaultLang);
 
         this.bindListeners({
             onSwitchLocale: IntlActions.switchLocale,
@@ -51,8 +62,8 @@ class IntlStore extends BaseStore {
 
     onSwitchLocale(locale) {
         switch (locale) {
-            case "cn":
-                counterpart.registerTranslations("cn", this.localesObject.cn);
+            case "en":
+                counterpart.registerTranslations("en", this.localesObject.en);
                 break;
 
             default:
