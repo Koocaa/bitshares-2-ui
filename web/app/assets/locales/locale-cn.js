@@ -68,7 +68,8 @@ module.exports = {
             required: "要求的币天",
             remaining: "剩余解冻天数",
             claim: "立即领取",
-            available: "可领取数量"
+            available: "可领取数量",
+            your_referal_link: "专属推荐链接"
         },
         connections: {
             known: "识别为",

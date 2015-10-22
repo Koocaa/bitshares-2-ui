@@ -89,7 +89,8 @@ module.exports = {
             required: "Benötigte coin-days",
             remaining: "Übriger Zusicherungswartezeit",
             claim: "Guthaben beanspruchen",
-            available: "Zur Beanspruchung verfügbar"
+            available: "Zur Beanspruchung verfügbar",
+            your_referal_link: "Your Referral Link"
         },
         user_issued_assets: {
             symbol: "Symbol",

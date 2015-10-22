@@ -59,7 +59,8 @@ module.exports = {
             upgrade_lifetime: "평생회원권 구입",
             subscribe: "연간회원권 구입",
             expires: "만료됨",
-            membership_expiration: "멤버쉽 만료일"
+            membership_expiration: "멤버쉽 만료일",
+            your_referal_link: "Your Referral Link"
         },
         user_issued_assets: {
             symbol: "약자",
@@ -456,7 +457,6 @@ module.exports = {
             rank: "순위",
             last_confirmed: "마지막 승인블록",
             missed: "누락 블록수"
-
         },
         committee_members: {
             title: "위원",

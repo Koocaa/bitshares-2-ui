@@ -96,7 +96,8 @@
             required: "Coin days required",
             remaining: "Days left of vesting period",
             claim: "Claim now",
-            available: "Available to claim"
+            available: "Available to claim",
+            your_referal_link: "Your Referral Link"
         },
         user_issued_assets: {
             symbol: "Symbol",
