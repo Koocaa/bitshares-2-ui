@@ -9,7 +9,7 @@ module.exports = {
         tr: "Turkish"
     },
     header: {
-        title: "Graphene (石墨烯)钱包",
+        title: "BitShares 比特股 2.0",
         dashboard: "概览",
         explorer: "浏览",
         exchange: "交易",
@@ -28,7 +28,7 @@ module.exports = {
         update_asset: "更新资产"
     },
     account: {
-        welcome: "欢迎使用 Graphene (石墨烯)系统",
+        welcome: "欢迎使用BitShares比特股2.0",
         assets: "资产",
         market_value: "市值",
         hour_24: "日涨跌幅%",
@@ -668,7 +668,7 @@ module.exports = {
         older: "更早"
     },
     footer: {
-        title: "Graphene (石墨烯)",
+        title: "BitShares 比特股 2.0",
         block: "最新区块",
         loading: "载入中..."
     },
