@@ -15,7 +15,7 @@ class SettingsStore {
 
         this.settings = Immutable.Map({
             locale: "cn",
-            connection: "wss://bitshares.dacplay.org/ws"
+            connection: "wss://bitshares.dacplay.org/ws",
             faucet_address: "https://bts2faucet.dacplay.org",
             unit: CORE_ASSET,
             showSettles: false,

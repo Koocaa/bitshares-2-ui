@@ -252,9 +252,11 @@ class CreateAccount extends React.Component {
                                 <br/>
                                 <br/>
                                 <label className="inline"><Link to="/existing-account"><Translate content="account.existing_accounts" /></Link></label>
-                                {false && this.state.hide_refcode ? <span>&nbsp; &bull; &nbsp;
+                                {/*
+                                    this.state.hide_refcode ? <span>&nbsp; &bull; &nbsp;
                                     <label className="inline"><a href onClick={this.showRefcodeInput.bind(this)}><Translate content="refcode.enter_refcode"/></a></label>
-                                </span> : null}
+                                </span> : null
+                                */}
                             </form>
                         </div>
                     </div>
