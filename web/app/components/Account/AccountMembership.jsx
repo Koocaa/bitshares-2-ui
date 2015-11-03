@@ -32,7 +32,6 @@ class AccountRefererStats extends React.Component {
 
     render(){
         let stats = this.props.referral_stats;
-        console.log(stats);
 
         return (
             <div>
