@@ -69,7 +69,7 @@ module.exports = {
             remaining: "剩余解冻天数",
             claim: "立即领取",
             available: "可领取数量",
-            your_referal_link: "专属推荐链接"
+            your_referal_link: "专属推荐链接",
             referral_stats_for: "%(name)s 的推荐统计"
         },
         connections: {
