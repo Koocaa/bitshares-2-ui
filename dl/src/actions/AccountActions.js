@@ -6,6 +6,8 @@ import WalletApi from "../rpc_api/WalletApi";
 import ApplicationApi from "../rpc_api/ApplicationApi";
 import WalletDb from "../stores/WalletDb";
 import WalletActions from "../actions/WalletActions";
+import SettingsStore from "stores/SettingsStore";
+
 
 let accountSubs = {};
 let accountLookup = {};
@@ -110,6 +112,25 @@ class AccountActions {
 
     unlinkAccount(name) {
         this.dispatch(name);
+    }
+
+    fetchReferralStats(name) {
+        let promise = fetch(SettingsStore.getSetting("faucet_address") + "/api/v1/accounts/"+name+"/referral_stats", {
+            method: 'post',
+            mode: 'cors',
+            headers: {
+                "Accept": "application/json",
+                "Content-type": "application/json"
+            }
+        })
+        .then(r => r.json());
+
+        return promise.then(result => {
+            this.dispatch(result.stats);
+        })
+        .catch(
+            error => { throw error; this.dispatch() }
+        );
     }
 }
 

@@ -60,7 +60,8 @@ module.exports = {
             subscribe: "연간회원권 구입",
             expires: "만료됨",
             membership_expiration: "멤버쉽 만료일",
-            your_referal_link: "Your Referral Link"
+            your_referal_link: "Your Referral Link",
+            referral_stats_for: "Referral Stats for %(name)s"
         },
         user_issued_assets: {
             symbol: "약자",

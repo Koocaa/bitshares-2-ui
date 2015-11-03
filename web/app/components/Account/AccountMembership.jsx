@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from "react-router";
+import connectToStores from "alt/utils/connectToStores";
 import Translate from "react-translate-component";
 import FormattedAsset from "../Utility/FormattedAsset";
 import LoadingIndicator from "../LoadingIndicator";
@@ -15,7 +16,58 @@ import utils from "common/utils";
 import WalletActions from "actions/WalletActions";
 import {VestingBalance} from "./AccountVesting";
 
-@BindToChainState({keep_updating:true})
+@connectToStores
+class AccountRefererStats extends React.Component {
+    static propTypes = {
+        accountName: React.PropTypes.string.isRequired
+    }
+
+    static getStores() {
+        return [AccountStore]
+    }
+
+    static getPropsFromStores() {
+        return AccountStore.getState()
+    }
+
+    render(){
+        let stats = this.props.referral_stats;
+        console.log(stats);
+
+        return (
+            <div>
+            <section className="content-block">
+                <div className="medium-12"><Translate content="account.member.your_referal_link" />: <span style={{borderBottom:"1px solid #444", padding:"5px 10px"}}>https://bitshares.dacplay.org?r={this.props.accountName}</span></div>
+            </section>
+            {
+                stats ? (
+                    <section>
+                        <table role="grid" className="refer-stats">
+                            <caption><Translate content="account.member.referral_stats_for" name={this.props.accountName} /></caption>
+                            <thread>
+                                <tr>
+                                    <th><Translate content="account.member.basic" /></th>
+                                    <th><Translate content="account.member.annual" /></th>
+                                    <th><Translate content="account.member.lifetime" /></th>
+                                </tr>
+                            </thread>
+                            <tbody>
+                                <tr>
+                                    <td>{stats.basic}</td>
+                                    <td>{stats.annual}</td>
+                                    <td>{stats.lifetime}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                ) : null
+            }
+            </div>
+        );
+    }
+}
+
+@BindToChainState({keep_updating:false})
 class AccountMembership extends React.Component {
 
     static propTypes = {
@@ -78,16 +130,23 @@ class AccountMembership extends React.Component {
         let core_asset = ChainStore.getAsset("1.3.0");
         let lifetime_cost = gprops.parameters.current_fees.parameters[8][1].membership_lifetime_fee*gprops.parameters.current_fees.scale/10000;
         let annual_cost = gprops.parameters.current_fees.parameters[8][1].membership_annual_fee*gprops.parameters.current_fees.scale/10000;
+        // get referral stats for premium member
+        if (member_status === "lifetime" || member_status === "annual") {
+            AccountActions.fetchReferralStats(account.name)
+        }
 
         return (
             <div className="grid-content" style={{overflowX: "hidden"}}>
                 <div className="content-block">
                     <h3><Translate content={membership}/> {expiration}</h3>
-                    { member_status=== "lifetime" || member_status === "annual" ? (
-                        <div className="medium-12"> <Translate content="account.member.your_referal_link" />: <span style={{borderBottom:"1px solid #444", padding:"5px 10px"}}>https://bitshares.dacplay.org/r/{account.name}</span></div>
-                    ) : null }
+                    {/* referral links and stats */}
+                    { member_status === "lifetime" || member_status === "annual" ? (
+                        <AccountRefererStats accountName={account.name} />
+                    ) : (
+                        <div><span className="info label">Note</span> Upgrade to annual/lifetime member to engage referral program and get your exclusive referral links</div>
+                    )}
 
-                    { member_status=== "lifetime" ? null : (
+                    { member_status === "lifetime" ? null : (
                        <div>
                            <div className="large-6 medium-8">
                                <HelpContent path="components/AccountMembership" section="lifetime" feesCashback={100 - network_fee} price={{amount: lifetime_cost, asset: core_asset}}/>

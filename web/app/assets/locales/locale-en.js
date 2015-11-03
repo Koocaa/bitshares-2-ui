@@ -97,7 +97,8 @@
             remaining: "Days left of vesting period",
             claim: "Claim now",
             available: "Available to claim",
-            your_referal_link: "Your Referral Link"
+            your_referal_link: "Your Referral Link",
+            referral_stats_for: "Referral Stats for %(name)s"
         },
         user_issued_assets: {
             symbol: "Symbol",

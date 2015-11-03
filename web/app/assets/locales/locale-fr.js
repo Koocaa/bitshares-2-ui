@@ -48,7 +48,8 @@ module.exports = {
             lifetime: "Membre à vie",
             basic: "Membre basique",
             annual: "Abonné annuel",
-            your_referal_link: "Your Referral Link"
+            your_referal_link: "Your Referral Link",
+            referral_stats_for: "Referral Stats for %(name)s"
         },
         user_issued_assets: {
             symbol: "Symbol",

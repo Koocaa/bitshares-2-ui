@@ -30,6 +30,7 @@ class AccountStore extends BaseStore {
             onUnlinkAccount: AccountActions.unlinkAccount,
             onAccountSearch: AccountActions.accountSearch,
             // onNewPrivateKeys: [ PrivateKeyActions.loadDbData, PrivateKeyActions.addKey ]
+            onFetchReferalStats: AccountActions.fetchReferralStats
         });
         this._export("loadDbData", "tryToSetCurrentAccount", "onCreateAccount",
             "getMyAccounts", "isMyAccount", "getMyAuthorityForAccount");
@@ -46,7 +47,8 @@ class AccountStore extends BaseStore {
             myIgnoredAccounts: Immutable.Set(),
             unFollowedAccounts: Immutable.Set(accountStorage.get("unfollowed_accounts") || []),
             searchAccounts: Immutable.Map(),
-            searchTerm: ""
+            searchTerm: "",
+            referral_stats: null
         }
     }
 
@@ -311,7 +313,10 @@ class AccountStore extends BaseStore {
             }
         })
     }
-    
+
+    onFetchReferalStats(stats){
+        this.state.referral_stats = stats;
+    }
 }
 
 export default alt.createStore(AccountStore, "AccountStore");
