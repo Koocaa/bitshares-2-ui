@@ -31,7 +31,7 @@ module.exports = function(options) {
         new Clean(cleanDirectories),
         new webpack.DefinePlugin({
             APP_VERSION: JSON.stringify(git.tag())
-        })
+        }),
         new webpack.DefinePlugin({GA_TRACKING_CODE: JSON.stringify('UA-56053564-7')})
     ];
 
