@@ -70,7 +70,9 @@ module.exports = {
             claim: "立即领取",
             available: "可领取数量",
             your_referal_link: "专属推荐链接",
-            referral_stats_for: "%(name)s 的推荐统计"
+            referral_stats_for: "%(name)s 的推荐统计",
+            note: "提示",
+            upgrade_notice_for_referral_link: "立即升级到终身/年度会员，获得专属推荐链接"
         },
         connections: {
             known: "识别为",

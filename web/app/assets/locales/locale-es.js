@@ -60,7 +60,9 @@
             expires: "expira",
             membership_expiration: "Vencimiento de la Membresía",
             your_referal_link: "Your Referral Link",
-            referral_stats_for: "Referral Stats for %(name)s"
+            referral_stats_for: "Referral Stats for %(name)s",
+            note: "NOTE",
+            upgrade_notice_for_referral_link: "Upgrade to annual/lifetime member to engage referral program and get your exclusive referral links"
         },
         user_issued_assets: {
             symbol: "Simbolo",
