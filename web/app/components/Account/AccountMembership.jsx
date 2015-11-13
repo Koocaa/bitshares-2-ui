@@ -142,7 +142,7 @@ class AccountMembership extends React.Component {
                     { member_status === "lifetime" || member_status === "annual" ? (
                         <AccountRefererStats accountName={account.name} />
                     ) : (
-                        <div><span className="info label">Note</span> Upgrade to annual/lifetime member to engage referral program and get your exclusive referral links</div>
+                        <div><span className="info label"><Translate content="account.member.note" /></span> <Translate content="account.member.upgrade_notice_for_referral_link" /></div>
                     )}
 
                     { member_status === "lifetime" ? null : (
