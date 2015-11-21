@@ -12,7 +12,7 @@ import PriceText from "../Utility/PriceText";
 import TransitionWrapper from "../Utility/TransitionWrapper";
 
 class OrderBookRowVertical extends React.Component {
-    
+
     shouldComponentUpdate(nextProps) {
         return (
             nextProps.order.price_full !== this.props.order.price_full ||
@@ -132,7 +132,7 @@ class OrderBook extends React.Component {
     componentWillUnmount() {
         window.removeEventListener("resize", this._updateHeight, false);
     }
-    
+
     componentDidMount() {
 
         if (!this.props.horizontal) {
@@ -146,7 +146,7 @@ class OrderBook extends React.Component {
             let bidsContainer = ReactDOM.findDOMNode(this.refs.hor_bids);
             Ps.initialize(bidsContainer);
             let asksContainer = ReactDOM.findDOMNode(this.refs.hor_asks);
-            Ps.initialize(asksContainer);            
+            Ps.initialize(asksContainer);
         }
 
     }
@@ -162,9 +162,9 @@ class OrderBook extends React.Component {
             Ps.update(bidsContainer);
         } else {
             let bidsContainer = ReactDOM.findDOMNode(this.refs.hor_bids);
-            Ps.update(bidsContainer);         
+            Ps.update(bidsContainer);
             let asksContainer = ReactDOM.findDOMNode(this.refs.hor_asks);
-            Ps.update(asksContainer);     
+            Ps.update(asksContainer);
         }
     }
 
@@ -425,14 +425,14 @@ class OrderBook extends React.Component {
                                             <th style={{paddingRight: 18, textAlign: "right"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> ({baseSymbol})</span></th>
                                         </tr>
                                     </thead>
-                                </table>    
+                                </table>
                                 <div className="grid-block" ref="hor_bids" style={{paddingRight: !showAllBids ? 0 : 15, overflow: "hidden", maxHeight: 264}}>
                                     <table style={{paddingBottom: 5}} className="table order-table table-hover text-right">
                                         <TransitionWrapper
                                             ref="bidTransition"
                                             className="orderbook orderbook-bottom"
                                             component="tbody"
-                                            transitionName="newrow"                                            
+                                            transitionName="newrow"
                                         >
                                             {bidRows}
                                         </TransitionWrapper>
@@ -479,7 +479,7 @@ class OrderBook extends React.Component {
                                                 ref="askTransition"
                                                 className="orderbook ps-container orderbook-top"
                                                 component="tbody"
-                                                transitionName="newrow"                                            
+                                                transitionName="newrow"
                                             >
                                                 {askRows}
                                             </TransitionWrapper>
@@ -502,7 +502,7 @@ class OrderBook extends React.Component {
                                             ref="bidTransition"
                                             className="orderbook ps-container orderbook-top"
                                             component="tbody"
-                                            transitionName="newrow"                                            
+                                            transitionName="newrow"
                                         >
                                             {bidRows}
                                         </TransitionWrapper>

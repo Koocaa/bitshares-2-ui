@@ -150,7 +150,25 @@ form.order-form {
   border-bottom: none !important;
 }
 
+.orderbook-latest-price {
+    td {
+      background-color: #4C4C4C !important;
+      border-bottom: 1px solid grey !important;
+      border-top: 1px solid grey !important;
+      padding: 10px 0 !important;
+      font-weight: bold;
+    }
+  border-bottom: 1px solid #777;
+  border-top: 1px solid #777;
 
+  & > td {
+    padding:10px 5px;
+  }
+}
+
+.orderbook-latest-price-num {
+  font-size:1rem; color:yellow;
+}
 
 .left-orderbook-header {
   width: 100%;
@@ -174,10 +192,10 @@ tr.top-header, tr.bottom-header, tr.spread-row {
 
 .bid-total {
   font-size: 1.1rem;
-  color: $bid-color;  
+  color: $bid-color;
 }
 
-.ask-total { 
+.ask-total {
   color: $ask-color;
 }
 
