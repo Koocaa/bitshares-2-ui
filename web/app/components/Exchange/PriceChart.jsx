@@ -5,6 +5,7 @@ import Highcharts from "react-highcharts/bundle/highstock";
 import utils from "common/utils";
 import _ from "lodash";
 import Translate from "react-translate-component";
+var translate = require('counterpart');
 
 require("./highcharts-plugins/technical-indicators.src.js");
 require("./highcharts-plugins/rsi.js");
@@ -224,7 +225,7 @@ class PriceChart extends React.Component {
 
         let positiveColor = "rgba(110, 193, 5, 0.80)";
         let negativeColor = "rgba(225, 66, 74, 0.80)";
-        
+
         if (!priceSeriesData.length && latest) {
             let now = (new Date).getTime();
             priceSeriesData.push([now, latest.full, latest.full, latest.full, latest.full]);
@@ -309,8 +310,8 @@ class PriceChart extends React.Component {
                 useHTML: true,
                 padding: 0,
                 formatter: function () {
-                    let price_dec = base.get("precision");
-                    let vol_dec = quote.get("precision");
+                    let price_dec = 3; //base.get("precision");
+                    let vol_dec = 3; //quote.get("precision");
                     let time =  Highcharts.Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x);
 
 
@@ -321,17 +322,33 @@ class PriceChart extends React.Component {
                         return finalString + "<b>" + key.toUpperCase() + "</b>" + ": " + Highcharts.Highcharts.numberFormat(indicator[1], price_dec, ".", ",") + "  ";
                     }, "");
 
-                    return ("<span style='color: white;fill: white'><b>T:&nbsp;</b>" + time +
-                            "&nbsp;<b>O:&nbsp;</b>" + Highcharts.Highcharts.numberFormat(this.points[0].point.open, price_dec, ".", ",") +
-                            "&nbsp;&nbsp;<b>H:&nbsp;</b>" + Highcharts.Highcharts.numberFormat(this.points[0].point.high, price_dec, ".", ",") +
-                            "&nbsp;&nbsp;<b>L:&nbsp;</b>" + Highcharts.Highcharts.numberFormat(this.points[0].point.low, price_dec, ".", ",") +
-                            "&nbsp;&nbsp;<b>C:&nbsp;</b>" + Highcharts.Highcharts.numberFormat(this.points[0].point.close, price_dec, ".", ",") +
-                            "<b>&nbsp;V:&nbsp;</b>" + Highcharts.Highcharts.numberFormat(this.points[1] ? this.points[1].point.y : 0, vol_dec, ".", ",") + " " +
-                            quoteSymbol + "<br/>" + TA + "</span>");
-
+                    // if ((this.points[0].point && this.points[0].point.open) && (this.points[1].point && this.points[1].point.y)) {
+                    return ("<div class='plot-stat'>" +
+                                "<span class='ps-t'><b>"+translate("exchange.stats.t")+"</b>" + time + "</span>" +
+                                "<span class='ps-o'><b>"+translate("exchange.stats.o")+"</b>" +
+                                Highcharts.Highcharts.numberFormat(this.points[0].point.open, price_dec, ".", ",") +
+                                "</span><span class='ps-h'><b>"+translate("exchange.stats.h")+"</b>" +
+                                Highcharts.Highcharts.numberFormat(this.points[0].point.high, price_dec, ".", ",") +
+                                "</span><span class='ps-l'><b>"+translate("exchange.stats.l")+"</b>" +
+                                Highcharts.Highcharts.numberFormat(this.points[0].point.low, price_dec, ".", ",") +
+                                "</span><span class='ps-c'><b>"+translate("exchange.stats.c")+"</b>" +
+                                Highcharts.Highcharts.numberFormat(this.points[0].point.close, price_dec, ".", ",") +
+                                "</span><span class='ps-v'><b>"+translate("exchange.stats.v")+"</b>" +
+                                Highcharts.Highcharts.numberFormat(this.points[1] ? this.points[1].point.y : 0, vol_dec, ".", ",") + " " +
+                                quoteSymbol + "<br/>" + TA + "</span>"+
+                            "</div>");
+                    // }
+                    // else if this.points.length == 1 && this.points[0] && this.points[0].point.open
+                    //     return time + "O:" + Highcharts.numberFormat(this.points[0].point.open, price_dec,".",",") + "  H:" + Highcharts.numberFormat(this.points[0].point.high, price_dec,".",",")+ "  L:" + Highcharts.numberFormat(this.points[0].point.low, price_dec,".",",") + "  C:" + Highcharts.numberFormat(this.points[0].point.close, price_dec,".",",")+TA
+                    // else if this.points.length == 1 && this.points[1] && this.points[1].point.y
+                    //     return time + "V:" + Highcharts.numberFormat(this.points[1].point.y, vol_dec,".",",")+" "+scope.volumeSymbol+TA
+                    // else {
+                    //     return ""
+                    // }
                 },
                 positioner: function () {
-                    return { x: 110, y: -5 };
+                    // return { x: 250, y: -5 };
+                    return { x: 110, y: -8 };
                 }
             },
             series: [

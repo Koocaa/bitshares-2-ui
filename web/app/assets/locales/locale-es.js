@@ -523,7 +523,15 @@
         vertical: "Vertical",
         horizontal: "Horizontal",
         confirm_buy: "Confimar orden: Comprar %(buy_amount)s %(buy_symbol)s al precio de %(price_amount)s %(price_symbol)s",
-        confirm_sell: "Confirmar orden: Vender %(sell_amount)s %(sell_symbol)s al precio de %(price_amount)s %(price_symbol)s"
+        confirm_sell: "Confirmar orden: Vender %(sell_amount)s %(sell_symbol)s al precio de %(price_amount)s %(price_symbol)s",
+        stats:{
+            t: "T",
+            o: "O",
+            c: "C",
+            h: "H",
+            l: "L",
+            v: "V"
+        }
     },
     markets: {
         base: "Activo base",

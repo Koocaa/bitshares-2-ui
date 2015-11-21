@@ -527,7 +527,15 @@ module.exports = {
         confirm_sell: "주문 확인: %(sell_amount)s %(sell_symbol)s 을 %(price_amount)s %(price_symbol)s 에 매도",
         market_name: "종목명",
         quote_supply: "유통량",
-        base_supply: "유통량"
+        base_supply: "유통량",
+        stats:{
+            t: "T",
+            o: "O",
+            c: "C",
+            h: "H",
+            l: "L",
+            v: "V"
+        }
     },
     markets: {
         base: "기초 자산",

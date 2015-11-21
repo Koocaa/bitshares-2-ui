@@ -674,10 +674,19 @@ module.exports = {
         borrow: "Leihen",
         no_balance: "Ungenügendes Guthaben",
         invalid_amount: "Ungültiger Betrag",
-        invalid_price: "Ungültiger Preis"
+        invalid_price: "Ungültiger Preis",
+        index: "Index",
+        stats:{
+            t: "T",
+            o: "O",
+            c: "C",
+            h: "H",
+            l: "L",
+            v: "V"
+        }
     },
     fees: {
-     title: "Gebühren"
+        title: "Gebühren"
     },
     markets: {
         title: "Märkte",

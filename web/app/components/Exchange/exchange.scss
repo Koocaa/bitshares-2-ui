@@ -554,3 +554,11 @@ table thead tr th.mymarkets-header {
   100% { background-color: transparent;}
 }
 
+.plot-stat {
+  line-height:22px;
+  span { margin-right:10px; }
+  .ps-t,.ps-o,.ps-h,.ps-l,.ps-c,.ps-v {
+    color:white;
+    b {color:yellow;margin-right:2px;font-weight:bold;}
+  }
+}

@@ -707,10 +707,18 @@
         show_asks: "Tümünü göster",
         hide: "Gizle",
         short: "Kısa",
-        others: "Diğerleri"
+        others: "Diğerleri",
+        stats:{
+            t: "T",
+            o: "O",
+            c: "C",
+            h: "H",
+            l: "L",
+            v: "V"
+        }
     },
     fees: {
-     title: "Ücret Tarifesi"
+        title: "Ücret Tarifesi",
     },
     markets: {
         title: "Piyasalar",

@@ -738,7 +738,15 @@ module.exports = {
         show_bids: "显示所有买单",
         show_asks: "显示所有卖单",
         hide: "隐藏",
-        "short": "做空"
+        "short": "做空",
+        stats:{
+            t: "",
+            o: "开",
+            c: "收",
+            h: "高",
+            l: "低",
+            v: "量"
+        }
     },
     markets: {
         title: "交易所",

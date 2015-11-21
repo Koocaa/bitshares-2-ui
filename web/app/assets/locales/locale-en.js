@@ -707,10 +707,18 @@
         show_asks: "Show all asks",
         hide: "Hide",
         short: "Short",
-        others: "Others"
+        others: "Others",
+        stats:{
+            t: "T",
+            o: "O",
+            c: "C",
+            h: "H",
+            l: "L",
+            v: "V"
+        }
     },
     fees: {
-     title: "Fee Schedule"
+        title: "Fee Schedule"
     },
     markets: {
         title: "Markets",
