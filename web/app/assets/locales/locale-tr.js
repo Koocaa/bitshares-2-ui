@@ -657,6 +657,7 @@
         value: "Değer",
         price: "Fiyat",
         latest: "En Son",
+        time: "Date",
         call: "Çağrı Fiyatı",
         core_rate: "Ücret Oranı",
         settle: "Ödeme",

@@ -507,6 +507,7 @@ module.exports = {
         total: "총액",
         value: "총액",
         price: "가격",
+        time: "Date",
         latest: "최종 가격",
         call: "콜 가격",
         core_rate: "Fee Rate",

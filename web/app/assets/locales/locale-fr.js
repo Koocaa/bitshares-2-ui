@@ -373,6 +373,7 @@ module.exports = {
         total: "Total",
         value: "Valeur",
         price: "Prix",
+        time: "Date",
         latest: "Dernier Prix",
         call: "Prix de flux",
         volume: "Volume",

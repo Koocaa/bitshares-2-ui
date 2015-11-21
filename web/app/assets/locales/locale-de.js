@@ -629,6 +629,7 @@ module.exports = {
         total: "Gesamt",
         value: "Wert",
         price: "Preis",
+        time: "Date",
         latest: "Letzer Preis",
         call: "Call Preis",
         core_rate: "Gebührenrate",

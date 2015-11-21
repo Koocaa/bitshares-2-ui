@@ -506,6 +506,7 @@
         total: "Total",
         value: "Valor",
         price: "Precio",
+        time: "Date",
         latest: "Ultimo Precio",
         call: "Precio de Rescate (Call Price)",
         core_rate: "Tasa de Comisión",
