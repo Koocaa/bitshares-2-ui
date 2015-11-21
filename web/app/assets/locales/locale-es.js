@@ -613,6 +613,7 @@
         noneed_backup: "No es necesario un backup"
     },
     borrow: {
+        borrow_btn: "Borrow %(asset)s",
         title: "%(asset_symbol)s Margin",
         no_valid: "No hay feeds válidos para %(asset_symbol)s",
         coll_ratio: "Relación colateral",

@@ -803,6 +803,7 @@
         noneed_backup: "Yedekleme gerekmiyor"
     },
     borrow: {
+        borrow_btn: "Borrow %(asset)s",
         title: "%(asset_symbol)s Marjin",
         no_valid: "%(asset_symbol)s için geçerli yayın mevcut değil",
         coll_ratio: "Teminat oranı",

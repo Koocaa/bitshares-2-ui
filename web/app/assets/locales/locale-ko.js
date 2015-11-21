@@ -619,6 +619,7 @@ module.exports = {
         noneed_backup: "No backup is needed"
     },
     borrow: {
+        borrow_btn: "Borrow %(asset)s",
         title: "Collateral position for %(asset_symbol)s",
         no_valid: "%(asset_symbol)s 에 대한 유효한 가격정보가 없음",
         coll_ratio: "담보 비율",

@@ -831,6 +831,7 @@ module.exports = {
         balance_claim_lookup: "查询余额"
     },
     borrow: {
+        borrow_btn: "借入 %(asset)s",
         title: "%(asset_symbol)s 保证金头寸",
         no_valid: "无有效喂价 %(asset_symbol)s",
         coll_ratio: "保证金比例",

@@ -771,6 +771,7 @@ module.exports = {
         noneed_backup: "Kein Sicherung erforderlich"
     },
     borrow: {
+        borrow_btn: "Borrow %(asset)s",
         title: "Kollateral Position für %(asset_symbol)s",
         no_valid: "Kein Gültiger Feed Preis für %(asset_symbol)s",
         coll_ratio: "Kollateral Ratio",
