@@ -350,6 +350,13 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.table {
+  &.table-hover.order-table > tbody > tr:hover > td, .table-hover.order-table > tbody > tr:hover > th {
+    background-color: lighten($bg-color, 30%);
+//    border-bottom:1px solid white;
+  }
+}
+
 // block-list
 
 .block-list {

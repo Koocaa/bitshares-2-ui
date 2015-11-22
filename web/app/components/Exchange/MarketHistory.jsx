@@ -216,7 +216,7 @@ class MarketHistory extends React.Component {
                     </div>
                 </div>
                 <div className="grid-block left-orderbook-header market-right-padding-only" ref="history">
-                    <table className="table order-table text-right market-right-padding">
+                    <table className="table table-hover order-table text-right market-right-padding">
                         <thead>
                             <tr>
                                 <th style={{textAlign: "right"}}><Translate content="exchange.price" /><br/><span className="header-sub-title">{baseSymbol}/{quoteSymbol}</span></th>
