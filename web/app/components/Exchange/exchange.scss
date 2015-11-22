@@ -4,6 +4,8 @@ $call-color: #BBBF2B;
 $light-panel-bg-color: #353742;
 $positive-color: #6EC105;
 $negative-color: #E1424A;
+$num-int: transparentize(#e0e0e0,.2);
+$num-dec: transparentize($num-int,.3);
 
 .market-layout {
   > .grid-block {
@@ -40,6 +42,55 @@ $negative-color: #E1424A;
     height: auto;
 
     padding: 0 0.625em 1.25em;
+}
+
+td.orderHistoryBid {
+  > span.price-integer, > span > span.price-integer {
+    font-weight: bold;
+    color: $bid-color;
+  }
+
+  > span.price-decimal, > span > span.price-decimal {
+    color: #e0e0e0;
+    opacity: 0.6;
+  }
+}
+
+td.orderHistoryAsk {
+  > span.price-integer, > span > span.price-integer {
+    font-weight: bold;
+    color: $ask-color;
+  }
+
+  > span.price-decimal, > span >span.price-decimal {
+    color: #e0e0e0;
+    opacity: 0.6;
+  }
+}
+
+td.orderHistoryCall {
+  > span.price-integer, > span > span.price-integer {
+    font-weight: bold;
+    color: $call-color;
+  }
+
+  > span.price-decimal, > span >span.price-decimal{
+    color: #e0e0e0;
+    opacity: 0.6;
+  }
+}
+
+//general number parts
+.number-parts {
+  > span.price-integer, > span > span.price-integer {
+    font-weight: bold;
+    color: $num-int;
+  }
+
+  > span.price-decimal, > span > span.price-decimal,
+  > span.price-trailing, > span >span.price-trailing  {
+    color: $num-dec;
+  }
 }
 
 .order-table {

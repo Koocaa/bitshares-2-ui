@@ -10,6 +10,7 @@ import SettingsActions from "actions/SettingsActions";
 import classnames from "classnames";
 import PriceText from "../Utility/PriceText";
 import TransitionWrapper from "../Utility/TransitionWrapper";
+import NumberText from "../Utility/NumberText";
 
 class OrderBookRowVertical extends React.Component {
 
@@ -22,13 +23,18 @@ class OrderBookRowVertical extends React.Component {
 
     render() {
         let {order, quote, base, type, final} = this.props;
-
+        let base_precision  = this.props.base_precision || base.get('precision')
+        let quote_precision = this.props.quote_precision || quote.get('precision')
+        let changeClass = null;
+        if (this.state.hasChanged) {
+            changeClass = "order-change";
+        }
         let integerClass = type === "bid" ? "orderHistoryBid" : type === "ask" ? "orderHistoryAsk" : "orderHistoryCall";
 
         return (
-            <tr key={order.price_full} onClick={this.props.onClick} className={classnames({"final-row": final})}>
-                <td>{utils.format_number(order.value, base.get("precision") - 1)}</td>
-                <td>{utils.format_number(order.amount, quote.get("precision") - 1)}</td>
+            <tr key={order.price_full} onClick={this.props.onClick} className={classnames({"final-row": final} ,changeClass)}>
+                <td className={classnames("number-parts", {"show-for-large": !this.props.horizontal})}><NumberText preFormattedPrice={utils.number_to_text(order.value, this.props.base_precision-2)} /></td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, this.props.quote_precision-2)} /></td>
                 <td className={integerClass}>
                     <PriceText preFormattedPrice={order.price} />
                 </td>
@@ -48,18 +54,33 @@ class OrderBookRowHorizontal extends React.Component {
     }
 
     render() {
-        let {order, quote, base, type} = this.props;
 
+        let {order, quote, base, type, side} = this.props;
+        let base_precision  = this.props.base_precision || base.get('precision')
+        let quote_precision = this.props.quote_precision || quote.get('precision')
+
+        let changeClass = null;
+        if (this.state.hasChanged) {
+            changeClass = "order-change";
+        }
         let integerClass = type === "bid" ? "orderHistoryBid" : type === "ask" ? "orderHistoryAsk" : "orderHistoryCall" ;
         return (
-            <tr onClick={this.props.onClick} >
+            side == 'left' ?
+            <tr key={order.price_full} onClick={this.props.onClick} className={changeClass}>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.totalValue, base_precision)} /></td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} /></td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /></td>
                 <td className={integerClass}>
                     <PriceText preFormattedPrice={order.price} />
                 </td>
-                <td>{utils.format_number(order.amount, quote.get("precision") - 2)}</td>
-                <td>{utils.format_number(order.value, base.get("precision") - 2)}</td>
-                <td>{utils.format_number(order.totalValue, base.get("precision") - 2)}</td>
-
+            </tr> :
+            <tr key={order.price_full} onClick={this.props.onClick} className={changeClass}>
+                <td className={integerClass}>
+                    <PriceText preFormattedPrice={order.price} />
+                </td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /></td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} /></td>
+                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.totalValue, base_precision)} /></td>
             </tr>
         )
     }
@@ -230,6 +251,9 @@ class OrderBook extends React.Component {
 
         if(base && quote) {
             let totalBidAmount = 0;
+            let totalBidValue = 0;
+            let base_precision = base.get('precision')
+            let quote_precision = quote.get('precision')
             high = combinedBids.length > 0 ? combinedBids.reduce((total, a) => {
                 totalBids += a.value;
                 return total < a.price_full ? a.price_full : total;
@@ -261,6 +285,9 @@ class OrderBook extends React.Component {
                         base={base}
                         quote={quote}
                         type={order.type}
+                        base_precision={base_precision}
+                        quote_precision={quote_precision}
+                        side={this.state.flip ? 'right' : 'left'}
                     /> :
                     <OrderBookRowVertical
                         key={order.price_full}
@@ -270,6 +297,8 @@ class OrderBook extends React.Component {
                         quote={quote}
                         type={order.type}
                         final={index === 0}
+                        base_precision={base_precision}
+                        quote_precision={quote_precision}
                     />
                 )
             }).filter(a => {
@@ -312,6 +341,9 @@ class OrderBook extends React.Component {
                         base={base}
                         quote={quote}
                         type={order.type}
+                        base_precision={base_precision}
+                        quote_precision={quote_precision}
+                        side={this.state.flip ? 'left' : 'right'}
                     /> :
                     <OrderBookRowVertical
                         key={order.price_full}
@@ -321,7 +353,8 @@ class OrderBook extends React.Component {
                         quote={quote}
                         type={order.type}
                         final={0 === index}
-
+                        base_precision={base_precision}
+                        quote_precision={quote_precision}
                     />
                     );
             }).filter(a => {
@@ -336,6 +369,32 @@ class OrderBook extends React.Component {
         }
 
         let spread = high > 0 && low > 0 ? utils.format_number(low - high, base.get("precision")) : "0";
+
+        let left_side_thead = () => {
+            return (
+                <thead>
+                    <tr key="top-header" className="top-header">
+                        <th style={{textAlign: "right"}}><Translate content="exchange.price" /><br/><span className="header-sub-title">({baseSymbol}/{quoteSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="transfer.amount" /><br/><span className="header-sub-title">({quoteSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="exchange.value" /><br/><span className="header-sub-title">({baseSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="exchange.total" /><br/><span className="header-sub-title">({baseSymbol})</span></th>
+                    </tr>
+                </thead>
+            )
+        };
+
+        let right_side_thead = () => {
+            return (
+                <thead>
+                    <tr key="top-header" className="top-header">
+                        <th style={{textAlign: "right"}}><Translate content="exchange.total" /><br/><span className="header-sub-title">({baseSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="exchange.value" /><br/><span className="header-sub-title">({baseSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="transfer.amount" /><br/><span className="header-sub-title">({quoteSymbol})</span></th>
+                        <th style={{textAlign: "right"}}><Translate content="exchange.price" /><br/><span className="header-sub-title">({baseSymbol}/{quoteSymbol})</span></th>
+                    </tr>
+                </thead>
+            )
+        };
 
         if (this.props.horizontal) {
 

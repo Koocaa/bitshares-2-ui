@@ -207,6 +207,56 @@ var Utils = {
         };
     },
 
+    // convert number to int,dec,trailing parts object
+    number_to_text: function(num, precision = 4){
+        if (typeof num !== "number") {
+            return;
+        }
+
+        let priceText = this.format_number(num, precision);
+        let price_split = priceText.split(".");
+        let int = price_split[0];
+        let dec = price_split[1];
+        let i;
+
+        let zeros = 0;
+        if (num > 1) {
+            let l = dec.length;
+            for (i = l - 1; i >= 0; i--) {
+                if (dec[i] !== "0") {
+                    break;
+                }
+                zeros++;
+            };
+        } else {
+            let l = dec.length;
+            for (i = 0; i < l; i++) {
+                if (dec[i] !== "0") {
+                    i--;
+                    break;
+                }
+                zeros++;
+            };
+        }
+        let trailing = zeros ? dec.substr(Math.max(0, i + 1), dec.length) : null;
+
+        if (trailing) {
+            if (trailing.length === dec.length) {
+                dec = null;
+            } else  if (trailing.length) {
+                dec = dec.substr(0, i + 1);
+            }
+        }
+
+        return {
+            text: priceText,
+            int: int,
+            dec: dec,
+            trailing: trailing,
+            full: num
+        };
+    },
+
     get_op_type: function(object) {
         let type = parseInt(object.split(".")[1], 10);
 

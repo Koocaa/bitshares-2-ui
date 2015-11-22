@@ -8,6 +8,7 @@ import utils from "common/utils";
 import Translate from "react-translate-component";
 import market_utils from "common/market_utils";
 import PriceText from "../Utility/PriceText";
+import NumberText from "../Utility/NumberText";
 import cnames from "classnames";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
@@ -67,6 +68,9 @@ class MarketHistory extends React.Component {
         let {history, myHistory, base, quote, baseSymbol, quoteSymbol, flipped, isNullAccount} = this.props;
         let  {activeTab} = this.state;
         let historyRows = null;
+        let max_precision = Math.max(base.get('precision'), quote.get('precision'));
+        let base_precision  = base.get('precision');
+        let quote_precision = quote.get('precision');
 
         if (isNullAccount) {
             activeTab = "history";
@@ -107,13 +111,19 @@ class MarketHistory extends React.Component {
 
                 let parsed_order = market_utils.parse_order_history(order, paysAsset, receivesAsset, isAsk, flipped);
                 const block_num = trx.get("block_num");
+                let receives = utils.number_to_text(parsed_order.receives.amount / utils.get_asset_precision(receivesAsset.get("precision")), quote_precision);
+                let pays     = utils.number_to_text(parsed_order.pays.amount / utils.get_asset_precision(paysAsset.get("precision")), base_precision);
                 return (
                     <tr key={"my_history_" + keyIndex}>
                         <td className={parsed_order.className}>
                             <PriceText preFormattedPrice={parsed_order} />
                         </td>
-                        <td>{parsed_order.receives}</td>
-                        <td>{parsed_order.pays}</td>
+                        <td className="number-parts">
+                            <NumberText preFormattedPrice={receives} />
+                        </td>
+                        <td className="number-parts">
+                            <NumberText preFormattedPrice={pays} />
+                        </td>
                         <td><Link to={`/block/${block_num}`}>#{utils.format_number(block_num, 0)}</Link></td>
                     </tr>
                 );
@@ -142,13 +152,20 @@ class MarketHistory extends React.Component {
                 }
 
                 let parsed_order = market_utils.parse_order_history(order, paysAsset, receivesAsset, isAsk, flipped);
+                let receives = utils.number_to_text(order.receives.amount / utils.get_asset_precision(receivesAsset.get("precision")), quote_precision);
+                let pays     = utils.number_to_text(order.pays.amount / utils.get_asset_precision(paysAsset.get("precision")), base_precision);
+
                 return (
                     <tr key={"history_" + keyIndex}>
                         <td className={parsed_order.className}>
                             <PriceText preFormattedPrice={parsed_order} />
                         </td>
-                        <td>{parsed_order.receives}</td>
-                        <td>{parsed_order.pays}</td>
+                        <td className="number-parts">
+                            <NumberText preFormattedPrice={receives} />
+                        </td>
+                        <td className="number-parts">
+                            <NumberText preFormattedPrice={pays} />
+                        </td>
                         <td data-tip={new Date(order.time)}>{parsed_order.time}</td>
                     </tr>
                 );
