@@ -108,6 +108,8 @@ td.orderHistoryCall {
     > tbody > tr:nth-of-type(even) {
       background-color: #3C3C3C;
     }
+
+    & > tbody > tr > td { border-bottom:none; }
 }
 
 .my-orders {
