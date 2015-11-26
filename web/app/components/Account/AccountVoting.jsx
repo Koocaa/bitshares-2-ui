@@ -27,7 +27,7 @@ let wallet_api = new WalletApi()
 
 @BindToChainState()
 class AccountVoting extends React.Component {
-   
+
     static propTypes = {
       initialBudget: ChainTypes.ChainObject.isRequired,
       globalObject: ChainTypes.ChainObject.isRequired
@@ -215,7 +215,7 @@ class AccountVoting extends React.Component {
         let {lastBudgetObject} = this.state;
         let budgetObject;
 
-        budgetObject = ChainStore.getObject(lastBudgetObject ? lastBudgetObject : "2.13.1"); 
+        budgetObject = ChainStore.getObject(lastBudgetObject ? lastBudgetObject : "2.13.1");
         // console.log("getBudgetObject:", budgetObject, lastBudgetObject);
         if (budgetObject) {
             let timestamp = budgetObject.get("time");
@@ -254,7 +254,7 @@ class AccountVoting extends React.Component {
         let totalBudget = 0;
         let unusedBudget = 0;
         let workerBudget = globalObject ? parseInt(globalObject.getIn(["parameters", "worker_budget_per_day"]), 10) : 0;
-        
+
         if (budgetObject) {
             workerBudget = Math.min(24 * budgetObject.getIn(["record", "worker_budget"]), workerBudget);
             totalBudget = Math.min(24 * budgetObject.getIn(["record", "worker_budget"]), workerBudget);
@@ -280,15 +280,15 @@ class AccountVoting extends React.Component {
             if (!a) {
                 return false;
             }
-            
+
             // if (this._getTotalVotes(a) < 0) {
             //     return false;
             // }
             return new Date(a.get("work_end_date")) > now;
-            
+
         })
         .sort((a, b) => {
-            return this._getTotalVotes(b) - this._getTotalVotes(a);            
+            return this._getTotalVotes(b) - this._getTotalVotes(a);
         })
         .map((worker, index) => {
             // console.log("worker:", worker.toJS());
@@ -330,7 +330,7 @@ class AccountVoting extends React.Component {
                 <Tabs setting="votingTab" style={{maxWidth: "800px"}}>
 
                         <Tab title="account.votes.proxy_short">
-                            <div className="content-block">
+                            <div className="grid-content">
                                 <HelpContent style={{maxWidth: "800px"}} path="components/AccountVotingProxy" />
                                 <AccountVotingProxy
                                     currentProxy={this.state.proxy_account_name}
@@ -342,7 +342,7 @@ class AccountVoting extends React.Component {
                         </Tab>
 
                         <Tab title="explorer.witnesses.title">
-                            <div className={cnames("content-block", {disabled : proxy_is_set})}>
+                            <div className={cnames("grid-content", {disabled : proxy_is_set})}>
                                 <HelpContent style={{maxWidth: "800px"}} path="components/AccountVotingWitnesses" />
                                 <AccountsList
                                     type="witness"
@@ -356,7 +356,7 @@ class AccountVoting extends React.Component {
                         </Tab>
 
                         <Tab title="explorer.committee_members.title">
-                            <div className={cnames("content-block", {disabled : proxy_is_set})}>
+                            <div className={cnames("grid-content", {disabled : proxy_is_set})}>
                                 <HelpContent style={{maxWidth: "800px"}} path="components/AccountVotingCommittee" />
                                 <AccountsList
                                     type="committee"
@@ -370,8 +370,7 @@ class AccountVoting extends React.Component {
                         </Tab>
 
                         <Tab title="account.votes.workers_short">
-
-                            <div className={cnames("content-block", {disabled : proxy_is_set})}>
+                            <div className={cnames("grid-content", {disabled : proxy_is_set})}>
                                 <HelpContent style={{maxWidth: "800px"}} path="components/AccountVotingWorkers" />
                                 <table>
                                     <tbody>
