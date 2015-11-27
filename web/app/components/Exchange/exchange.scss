@@ -1,3 +1,4 @@
+$bg-color: black; //#2a2a2a;
 $bid-color: #50D2C2;
 $ask-color: #E3745B;
 $call-color: #BBBF2B;
@@ -109,7 +110,7 @@ td.orderHistoryCall {
       background-color: #3C3C3C;
     }
 
-    & > tbody > tr > td { border-bottom:none; }
+    & > tbody > tr > td { border-bottom-color: $bg-color; }
 }
 
 .my-orders {

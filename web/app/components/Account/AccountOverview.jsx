@@ -144,7 +144,7 @@ class AccountOverview extends React.Component {
             <div className="grid-content">
                 <div className="content-block small-12">
                     <h3><Translate content="transfer.balances" /></h3>
-                    <table className="table">
+                    <table className="table table-hover">
                         <thead>
                             <tr>
                                 {/*<th><Translate component="span" content="modal.settle.submit" /></th>*/}

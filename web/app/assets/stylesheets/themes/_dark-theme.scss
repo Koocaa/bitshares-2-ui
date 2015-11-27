@@ -343,17 +343,31 @@ h1, h2, h3, h4, h5, h6 {
     color: $secondary-text-color;
   }
   > tbody > tr > td {
-    border-bottom-color: $dark-text-color;
+    border-bottom-color: darken($dark-text-color,10%);
   }
   &.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
-    background-color: lighten($bg-color, 4%);
+    background-color: lighten($bg-color, 15%);
+    border-bottom-color: lighten($dark-text-color,20%);
   }
 }
 
 .table {
   &.table-hover.order-table > tbody > tr:hover > td, .table-hover.order-table > tbody > tr:hover > th {
-    background-color: lighten($bg-color, 30%);
-//    border-bottom:1px solid white;
+    background-color: lighten($bg-color, 20%);
+    border-bottom-color: lighten($dark-text-color,20%);
+  }
+}
+
+.right-column {
+  .table {
+    > tbody > tr > td {
+      border-bottom-color: darken($dark-text-color,3%);
+    }
+
+    &.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+      background-color: lighten($bg-color, 5%);
+      border-bottom-color: darken(white,20%);
+    }
   }
 }
 

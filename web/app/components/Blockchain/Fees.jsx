@@ -119,7 +119,7 @@ class FeeGroup extends React.Component {
         return (   
                    <div className="asset-card">
                     <div className="card-divider">{this.props.title}</div>
-                    <table className="table">
+                    <table className="table table-hover">
                      <thead>
                       <tr key={this.props.title}>
                        <th><Translate content={"explorer.block.op"} /></th>
