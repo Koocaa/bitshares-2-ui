@@ -1,0 +1,18 @@
+CACHE MANIFEST
+
+CACHE:
+/index.html
+/favicon.ico
+# /app.css
+/app.js
+/1.app.js
+# /vendors.js
+
+NETWORK:
+/api
+/transwiser
+/ws
+
+# FALLBACK:
+
+#############
