@@ -111,8 +111,9 @@ class MarketHistory extends React.Component {
 
                 let parsed_order = market_utils.parse_order_history(order, paysAsset, receivesAsset, isAsk, flipped);
                 const block_num = trx.get("block_num");
-                let receives = utils.number_to_text(parsed_order.receives.amount / utils.get_asset_precision(receivesAsset.get("precision")), quote_precision);
-                let pays     = utils.number_to_text(parsed_order.pays.amount / utils.get_asset_precision(paysAsset.get("precision")), base_precision);
+                let receives = utils.number_to_text(order.receives.amount / utils.get_asset_precision(receivesAsset.get("precision")), quote_precision);
+                let pays     = utils.number_to_text(order.pays.amount / utils.get_asset_precision(paysAsset.get("precision")), base_precision);
+
                 return (
                     <tr key={"my_history_" + keyIndex}>
                         <td className={parsed_order.className}>
