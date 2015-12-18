@@ -63,7 +63,7 @@ import AccountRefsStore from "stores/AccountRefsStore";
 import Help from "./components/Help";
 import InitError from "./components/InitError";
 import BrowserSupportModal from "./components/Modal/BrowserSupportModal";
-import createBrowserHistory from 'history/lib/createHashHistory';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
 import {IntlProvider} from "react-intl";
 import intlData from "./components/Utility/intlData";
 import connectToStores from "alt/utils/connectToStores";
