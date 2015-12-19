@@ -53,12 +53,12 @@ class AccountOverview extends React.Component {
         let balances = [];
         balanceList.forEach( balance => {
             let balanceObject = ChainStore.getObject(balance);
-            let asset_type = balanceObject.get("asset_type"); 
+            let asset_type = balanceObject.get("asset_type");
             let asset = ChainStore.getObject(asset_type);
             let isBitAsset = asset && asset.has("bitasset_data_id");
 
             const core_asset = ChainStore.getAsset("1.3.0");
-            
+
             let assetInfoLinks = asset && <ul>
                 <li><a href={`#/asset/${asset.get("symbol")}`}><Translate content="account.asset_details"/></a></li>
                 {asset.get("id") !== "1.3.0" ? <li><a href={`#/market/${asset.get("symbol")}_${core_asset?core_asset.get("symbol"):"BTS"}`}><Translate content="exchange.market"/></a></li> : null}
@@ -166,7 +166,7 @@ class AccountOverview extends React.Component {
                             {hiddenBalancesList.size ? (
                                 <tr>
                                     <td colSpan="4" style={{textAlign: "right"}}>
-                                        <div    
+                                        <div
                                             className="button outline"
                                             onClick={this._toggleHiddenAssets.bind(this)}
                                         >
