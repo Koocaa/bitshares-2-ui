@@ -249,6 +249,7 @@ module.exports = {
         open_orders: "委单",
         total_value: "市值",
         asset_details: "资产详情",
+        percent: "供给占比",
         id: "账户 ID",
         whitelist: {
             title: "白名单",
@@ -762,7 +763,10 @@ module.exports = {
         period: "周期 (天)",
         overbought: "超买",
         oversold: "超卖",
-        index: "指数"
+        index: "指数",
+        no_balance: "余额不足",
+        invalid_amount: "数量错误",
+        invalid_price: "价格错误"
     },
     markets: {
         title: "交易所",
