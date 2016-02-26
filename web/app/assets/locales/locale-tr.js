@@ -31,7 +31,7 @@
     propose: "teklif et",
     cancel: "iptal et",
     account: {
-        welcome: "Graphene'e Hoşgeldiniz",
+        welcome: "Blokzinciri'ne Hoşgeldiniz",
         asset: "Aktif",
         market_value: "Piyasa Değeri",
         hour_24: "24 Saat",
@@ -147,7 +147,9 @@
             force_settlement_delay_sec: "Zorunlu hesaplaşma gecikmesi (dakika)",
             force_settlement_offset_percent: "Zorunlu hesaplaşmanın yüzdelik sapması",
             maximum_force_settlement_volume: "Max zorunlu mahsup hacmi (yüzde)",
-            backing: "Kısanın dayandığı aktif"
+            backing: "Kısanın dayandığı aktif",
+            error_precision: "Aktif %(asset)s ile aynı hassasiyete sahip değil",
+            error_invalid: "O aktif kullanılamaz"
         },
         connections: {
             known: "Tarafından Tanınıyor",
@@ -627,7 +629,11 @@
         showSettles: "Ödeme emirlerini derinlik tablosunda gösterin ",
         yes: "Evet",
         no: "Hayır",
-        walletLockTimeout: "Cüzdan oto-kilit süresi (saniye)"
+        walletLockTimeout: "Cüzdan otomatik kitenme süresi (saniye)",
+        themes: "Tema",
+        "darkTheme": "Koyu tema",
+        "lightTheme": "Hafif tema",
+        "olDarkTheme": "Openledger koyu"
     },
     footer: {
         title: "Graphene",
@@ -640,7 +646,7 @@
         order_depth: "Piyasa Derinliği",
         history: "Tüm Geçmiş",
         my_history: "Geçmişim",
-        balance: "Bakiyeniz",
+        balance: "Bakiye",
         lowest_ask: "En düşük",
         highest_bid: "En yüksek",
         total: "Toplam",
@@ -667,7 +673,7 @@
         market_name: "Piyasalarım",
         quote_supply: "Karşıt arzı",
         base_supply: "Taban arzı",
-        more: "Tüm piyasalar",
+        more: "Piyasalar bul",
         volume_24: "24 Saat",
         change: "Değişim",
         confirm: "Verdiğiniz emir şimdiki fiyattan %(diff)s% kadar farklı, emin misiniz?",
@@ -682,9 +688,10 @@
         index: "Indeks",
         my_bids: "Alış Fiyatlarım",
         my_asks: "Satış Fiyatlarım",
+        my_orders: "Emirlerim",
         settle_orders: "Emirleri öde",
-        asks: "Satış Fiyatları",
-        bids: "Alış Fiyatları",
+        asks: "Satış emirleri",
+        bids: "Alım emirleri",
         no_data: "Veri yok",
         time: "Zaman aralığı",
         borrow: "Ödünç Al",
@@ -694,7 +701,8 @@
         show_bids: "Tüm alış fiyat göster",
         show_asks: "Tümünü göster",
         hide: "Gizle",
-        short: "Kısa"
+        short: "Kısa",
+        others: "Diğerleri"
     },
     fees: {
      title: "Ücret Tarifesi"
@@ -813,6 +821,12 @@
         title: "%(asset)s ödenmesini talep et",
         amount: "Ödenecek miktar",
         submit: "Aktif tasfiye et"
+      },
+      reserve: {
+        title: "Rezerv (yakılan) aktif",
+        amount: "Rezerv edilecek miktar",
+        from: "Rezerv yapılacak hesap",
+        submit: "Rezerv"
       },
       ok: "Tamam"
     },
