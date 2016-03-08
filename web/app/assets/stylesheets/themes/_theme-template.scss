@@ -771,6 +771,6 @@
   }
 
   .table > tbody > tr:nth-of-type(even) {
-    background-color: lighten($bg-color, 4%);
+    background-color: lighten($bg-color, 10%);
   }
 }
