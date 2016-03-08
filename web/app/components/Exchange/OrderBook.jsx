@@ -25,16 +25,18 @@ class OrderBookRowVertical extends React.Component {
         let {order, quote, base, type, final} = this.props;
         let base_precision  = this.props.base_precision || base.get('precision')
         let quote_precision = this.props.quote_precision || quote.get('precision')
-        let changeClass = null;
-        if (this.state.hasChanged) {
-            changeClass = "order-change";
-        }
+
         let integerClass = type === "bid" ? "orderHistoryBid" : type === "ask" ? "orderHistoryAsk" : "orderHistoryCall";
 
         return (
-            <tr key={order.price_full} onClick={this.props.onClick} className={classnames({"final-row": final} ,changeClass)}>
+            <tr key={order.price_full} onClick={this.props.onClick} className={classnames({"final-row": final})}>
                 <td className={classnames("number-parts", {"show-for-large": !this.props.horizontal})}><NumberText preFormattedPrice={utils.number_to_text(order.value, this.props.base_precision-2)} /></td>
                 <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, this.props.quote_precision-2)} /></td>
+            {/*
+            <tr key={order.price_full} onClick={this.props.onClick} className={classnames({"final-row": final})}>
+                <td>{utils.format_number(order.value, base.get("precision"))}</td>
+                <td>{utils.format_number(order.amount, quote.get("precision"))}</td>
+            */}
                 <td className={integerClass}>
                     <PriceText preFormattedPrice={order.price} />
                 </td>
@@ -54,35 +56,41 @@ class OrderBookRowHorizontal extends React.Component {
     }
 
     render() {
-
-        let {order, quote, base, type, side} = this.props;
+        let {order, quote, base, type, position} = this.props;
         let base_precision  = this.props.base_precision || base.get('precision')
         let quote_precision = this.props.quote_precision || quote.get('precision')
 
-        let changeClass = null;
-        if (this.state.hasChanged) {
-            changeClass = "order-change";
-        }
         let integerClass = type === "bid" ? "orderHistoryBid" : type === "ask" ? "orderHistoryAsk" : "orderHistoryCall" ;
+
+        let price = <PriceText preFormattedPrice={order.price} />;
+        let amount = type === "bid" ?
+            <NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /> :
+            <NumberText preFormattedPrice={utils.number_to_text(order.for_sale, quote_precision)} />;
+        let value = type === "bid" ?
+            <NumberText preFormattedPrice={utils.number_to_text(order.for_sale, base_precision)} /> :
+            <NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} />;
+        let total = type === "bid" ?
+            <NumberText preFormattedPrice={utils.number_to_text(order.totalForSale, base_precision)} /> :
+            <NumberText preFormattedPrice={utils.number_to_text(order.totalValue, base_precision)} />;
+
         return (
-            side == 'left' ?
-            <tr key={order.price_full} onClick={this.props.onClick} className={changeClass}>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.totalValue, base_precision)} /></td>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} /></td>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /></td>
+            <tr onClick={this.props.onClick} >
+                {position === "left" ? <td>{total}</td> :
                 <td className={integerClass}>
-                    <PriceText preFormattedPrice={order.price} />
+                    {price}
                 </td>
-            </tr> :
-            <tr key={order.price_full} onClick={this.props.onClick} className={changeClass}>
+                }
+                <td className="number-parts">{position === "left" ? value : amount}</td>
+                <td className="number-parts">{position === "left" ? amount : value}</td>
+                {position === "right" ? <td>{total}</td> :
                 <td className={integerClass}>
-                    <PriceText preFormattedPrice={order.price} />
+                    {price}
                 </td>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /></td>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} /></td>
-                <td className="number-parts"><NumberText preFormattedPrice={utils.number_to_text(order.totalValue, base_precision)} /></td>
+                }
+
             </tr>
-        )
+        );
+
     }
 }
 
@@ -106,6 +114,7 @@ class OrderBook extends React.Component {
             !Immutable.is(nextProps.calls, this.props.calls) ||
             nextProps.horizontal !== this.props.horizontal ||
             nextProps.latest !== this.props.latest ||
+            nextProps.smallScreen !== this.props.smallScreen ||
             !utils.are_equal_shallow(nextState, this.state)
         );
     }
@@ -402,11 +411,11 @@ class OrderBook extends React.Component {
             let totalAsksLength = askRows.length;
 
             if (!showAllBids) {
-                bidRows.splice(13, bidRows.length);
+                bidRows.splice(12, bidRows.length);
             }
 
             if (!showAllAsks) {
-                askRows.splice(13, askRows.length);
+                askRows.splice(12, askRows.length);
             }
 
             return (
@@ -418,7 +427,7 @@ class OrderBook extends React.Component {
                                     {this.state.flip ? (
                                     <span>
                                         <span onClick={this._flipBuySell.bind(this)} style={{cursor: "pointer", fontSize: "1rem"}}>  &#8646;</span>
-                                        <span onClick={this.props.moveOrderBook} style={{cursor: "pointer", fontSize: "1rem"}}> &#8645;</span>
+                                        {!this.props.smallScreen ? <span onClick={this.props.moveOrderBook} style={{cursor: "pointer", fontSize: "1rem"}}> &#8645;</span> : null}
                                     </span>) : null}
                                     <div style={{lineHeight: "24px"}} className="float-right header-sub-title">
                                         <Translate content="exchange.total" />
@@ -437,7 +446,7 @@ class OrderBook extends React.Component {
                                         </tr>
                                     </thead>
                                 </table>
-                                <div className="grid-block" ref="hor_asks" style={{paddingRight: !showAllAsks ? 0 : 15, overflow: "hidden", maxHeight: 264}}>
+                                <div className="grid-block" ref="hor_asks" style={{paddingRight: !showAllAsks ? 0 : 15, overflow: "hidden", maxHeight: 252}}>
                                     <table style={{paddingBottom: 5}} className="table order-table table-hover text-right no-overflow">
                                         <TransitionWrapper
                                             ref="askTransition"
@@ -485,7 +494,7 @@ class OrderBook extends React.Component {
                                         </tr>
                                     </thead>
                                 </table>
-                                <div className="grid-block" ref="hor_bids" style={{paddingRight: !showAllBids ? 0 : 15, overflow: "hidden", maxHeight: 264}}>
+                                <div className="grid-block" ref="hor_bids" style={{paddingRight: !showAllBids ? 0 : 15, overflow: "hidden", maxHeight: 252}}>
                                     <table style={{paddingBottom: 5}} className="table order-table table-hover text-right">
                                         <TransitionWrapper
                                             ref="bidTransition"
@@ -549,7 +558,7 @@ class OrderBook extends React.Component {
                             <div ref="center_text" style={{minHeight: 35}}>
                                     <div key="spread" className="orderbook-latest-price" ref="centerRow">
                                         <div className="text-center spread">
-                                            {this.props.latest ? <span className={this.props.changeClass}><PriceText preFormattedPrice={this.props.latest} /> {baseSymbol}/{quoteSymbol}</span> : null}
+                                            {this.props.latest ? <span><PriceText preFormattedPrice={this.props.latest} /> {baseSymbol}/{quoteSymbol}</span> : null}
                                         </div>
                                     </div>
                             </div>

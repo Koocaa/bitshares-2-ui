@@ -672,7 +672,11 @@ module.exports = {
         showSettles: "在深度图中显示清算订单",
         yes: "是",
         no: "否",
-        walletLockTimeout: "钱包自动锁定时间（秒）"
+        walletLockTimeout: "钱包自动锁定时间（秒）",
+        themes: "主题",
+        darkTheme: "黑色主题",
+        lightTheme: "白色主题",
+        olDarkTheme: "Openledger黑"
     },
     pagination: {
         newer: "更近",
@@ -755,23 +759,7 @@ module.exports = {
             l: "低",
             v: "量"
         },
-        indicators: "技术指标",
-        rsi: "相对强弱指数(rsi)",
-        ema: "指数移动平均线(ema)",
-        sma: "算数移动平均线(sma)",
-        atr: "平均真实波幅(atr)",
-        period: "周期 (天)",
-        overbought: "超买",
-        oversold: "超卖",
-        index: "指数",
-        no_balance: "余额不足",
-        invalid_amount: "数量错误",
-        invalid_price: "价格错误",
-        my_orders: "我的订单",
-        show_bids: "显示所有买单",
-        show_asks: "显示所有卖单",
-        hide: "隐藏",
-        "short": "做空"
+        others: "其他"
     },
     markets: {
         title: "交易所",
