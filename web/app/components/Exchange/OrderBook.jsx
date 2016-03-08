@@ -57,17 +57,17 @@ class OrderBookRowHorizontal extends React.Component {
 
     render() {
         let {order, quote, base, type, position} = this.props;
-        let base_precision  = this.props.base_precision || base.get('precision')
-        let quote_precision = this.props.quote_precision || quote.get('precision')
+        let base_precision  = base.get('precision')
+        let quote_precision = quote.get('precision')
 
         let integerClass = type === "bid" ? "orderHistoryBid" : type === "ask" ? "orderHistoryAsk" : "orderHistoryCall" ;
 
         let price = <PriceText preFormattedPrice={order.price} />;
         let amount = type === "bid" ?
             <NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} /> :
-            <NumberText preFormattedPrice={utils.number_to_text(order.for_sale, quote_precision)} />;
+            <NumberText preFormattedPrice={utils.number_to_text(order.amount, quote_precision)} />;
         let value = type === "bid" ?
-            <NumberText preFormattedPrice={utils.number_to_text(order.for_sale, base_precision)} /> :
+            <NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} /> :
             <NumberText preFormattedPrice={utils.number_to_text(order.value, base_precision)} />;
         let total = type === "bid" ?
             <NumberText preFormattedPrice={utils.number_to_text(order.totalForSale, base_precision)} /> :
