@@ -216,21 +216,6 @@ class MarketHistory extends React.Component {
                         </table>
                     </div>
                 </div>
-                <div className="grid-block left-orderbook-header market-right-padding-only" ref="history">
-                    <table className="table table-hover order-table text-right market-right-padding">
-                        <thead>
-                            <tr>
-                                <th style={{textAlign: "right"}}><Translate content="exchange.price" /><br/><span className="header-sub-title">{baseSymbol}/{quoteSymbol}</span></th>
-                                <th style={{textAlign: "right"}}><Translate content="transfer.amount" /><br/><span className="header-sub-title">({quoteSymbol})</span></th>
-                                <th style={{textAlign: "right"}}><Translate content="exchange.value" /><br/><span className="header-sub-title">({baseSymbol})</span></th>
-                                <th style={{textAlign: "right"}}><Translate content={activeTab === "history" ? "exchange.time" : "explorer.block.title"} /><br/><span style={{visibility: "hidden"}} className="header-sub-title">({quoteSymbol})</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {historyRows}
-                        </tbody>
-                    </table>
-                </div>
             </div>
         );
     }

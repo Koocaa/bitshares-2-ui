@@ -228,7 +228,7 @@ class Exchange extends React.Component {
             }
         });
 
-        window.addEventListener("resize", this._getWindowSize, false);        
+        window.addEventListener("resize", this._getWindowSize, false);
     }
 
     componentDidMount() {
@@ -1360,7 +1360,7 @@ class Exchange extends React.Component {
                                     style={!smallScreen ? {minHeight: 273} : null}
                                     isOpen={this.state.buySellOpen}
                                     onToggleOpen={this._toggleOpenBuySell.bind(this)}
-                                    className={cnames("small-12 no-padding", smallScreen ? "medium-6" : "medium-4", this.state.flipBuySell ? "order-2 sell-form" : "order-1 buy-form")}
+                                    className={cnames("small-12 no-padding", smallScreen ? "medium-6" : "medium-6 large-4", this.state.flipBuySell ? "order-2 sell-form" : "order-1 buy-form")}
                                     type="bid"
                                     amount={buyAmount}
                                     price={displayBuyPrice}
@@ -1398,7 +1398,7 @@ class Exchange extends React.Component {
                                     style={!smallScreen ? {minHeight: 273} : null}
                                     isOpen={this.state.buySellOpen}
                                     onToggleOpen={this._toggleOpenBuySell.bind(this)}
-                                    className={cnames("small-12 no-padding", smallScreen ? "medium-6" : "medium-4", this.state.flipBuySell ? "order-1 buy-form" : "order-2 sell-form")}
+                                    className={cnames("small-12 no-padding", smallScreen ? "medium-6" : "medium-6 large-4", this.state.flipBuySell ? "order-1 buy-form" : "order-2 sell-form")}
                                     type="ask"
                                     amount={sellAmount}
                                     price={displaySellPrice}
@@ -1426,7 +1426,7 @@ class Exchange extends React.Component {
                                 /> : null}
 
                                 {!smallScreen ? <MarketHistory
-                                    className={cnames("no-padding no-overflow order-3", smallScreen ? "medium-6" : "medium-4")}
+                                    className={cnames("no-padding no-overflow order-3", smallScreen ? "medium-6" : "medium-12 large-4")}
                                     headerStyle={{paddingTop: 0}}
                                     history={activeMarketHistory}
                                     myHistory={currentAccount.get("history")}
@@ -1466,9 +1466,9 @@ class Exchange extends React.Component {
                             />
                     </div> : null}
 
-                        {smallScreen ? 
+                        {smallScreen ?
                         <div className="grid-block no-overflow shrink no-padding middle-content">
-                            <MarketHistory  
+                            <MarketHistory
                                 className={cnames("no-padding no-overflow", "small-12")}
                                 headerStyle={{paddingTop: 0}}
                                 history={activeMarketHistory}
@@ -1497,7 +1497,7 @@ class Exchange extends React.Component {
                             />) : null}
                         </div>
 
-                    
+
 
                         <div className="grid-block no-overflow shrink no-padding">
 

@@ -106,7 +106,7 @@ class MyOpenOrders extends React.Component {
 
     componentDidUpdate(prevProps) {
         let asksContainer = ReactDOM.findDOMNode(this.refs.asks);
-        Ps.update(asksContainer);     
+        Ps.update(asksContainer);
     }
 
     render() {
@@ -177,7 +177,7 @@ class MyOpenOrders extends React.Component {
         // }
 
         return (
-            <div style={{marginBottom: "15px"}} key="open_orders" className="small-12 large-7 no-padding small-vertical medium-horizontal align-spaced ps-container middle-content order-2" ref="orders">
+            <div style={{marginBottom: "15px"}} key="open_orders" className="small-12 large-12 no-padding small-vertical medium-horizontal align-spaced ps-container middle-content order-2" ref="orders">
 
                 <div className="exchange-bordered small-12" style={{height: 286}}>
                     <div className="exchange-content-header">
