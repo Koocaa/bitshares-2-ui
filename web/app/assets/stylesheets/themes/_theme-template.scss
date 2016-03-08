@@ -771,6 +771,9 @@
   }
 
   .table > tbody > tr:nth-of-type(even) {
-    background-color: lighten($bg-color, 10%);
+    background-color: lighten($bg-color, 12%);
+  }
+  .table > tbody > tr:nth-of-type(odd) {
+    background-color: $bg-color;
   }
 }

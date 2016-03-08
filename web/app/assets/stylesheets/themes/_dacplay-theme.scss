@@ -76,6 +76,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .table {
+//  &.table-hover.order-table > tbody > tr:nth-of-type(odd) {
+//    background-color: lighten($bg-color, 5%);
+//  }
+//  &.table-hover.order-table > tbody > tr:nth-of-type(even) {
+//    background-color: lighten($bg-color, 10%);
+//  }
+//  &.table-hover.order-table > tbody > tr, .table-hover.order-table > tbody > tr {
+//    background-color: lighten($bg-color, 5%);
+//    border-bottom-color: lighten($dark-text-color,10%);
+//  }
+
   &.table-hover.order-table > tbody > tr:hover > td, .table-hover.order-table > tbody > tr:hover > th {
     background-color: lighten($bg-color, 20%);
     border-bottom-color: lighten($dark-text-color,20%);
@@ -89,7 +100,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     &.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
-      background-color: lighten($bg-color, 5%);
+      background-color: lighten($bg-color, 20%);
       border-bottom-color: darken(white,20%);
     }
   }
@@ -112,3 +123,5 @@ h1, h2, h3, h4, h5, h6 {
 .menu-group.primary .menu-bar > li > a.active {
   background-color: #4c4c4c !important;
 }
+
+.darkTheme .modal { background-color:$bg-color; }
