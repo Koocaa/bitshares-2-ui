@@ -73,12 +73,6 @@ module.exports = {
             referral_stats_for: "%(name)s 的推荐统计",
             note: "提示",
             upgrade_notice_for_referral_link: "立即升级到终身/年度会员，获得专属推荐链接",
-            coindays: "币天",
-            earned: "已完成币天",
-            required: "要求的币天",
-            remaining: "剩余解冻天数",
-            claim: "立即领取",
-            available: "可领取数量",
             referral_link: "你的推荐链接",
             referral_text: "分享此链接给你的朋友参与引荐计划"
         },
