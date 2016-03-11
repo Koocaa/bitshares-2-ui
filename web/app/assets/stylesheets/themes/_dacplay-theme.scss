@@ -124,4 +124,12 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #4c4c4c !important;
 }
 
-.darkTheme .modal { background-color:$bg-color; }
+.darkTheme {
+  .modal { background-color:$bg-color; }
+  .block-content-header {
+    padding: 1rem;
+  }
+  .exchange-bordered {
+    padding-bottom:1rem; margin:0px 0px 10px 0px !important;
+  }
+}
