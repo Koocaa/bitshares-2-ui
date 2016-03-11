@@ -87,7 +87,7 @@ class AccountMembership extends React.Component {
     _onClaim(e) {
         e.preventDefault();
         let cvb = ChainStore.getObject( this.props.account.get("cashback_vb") );
-        
+
         WalletActions.claimVestingBalance(this.props.account.get("id"), cvb);
     }
 
@@ -105,7 +105,7 @@ class AccountMembership extends React.Component {
         if( ref ) account.referrer_name = ref.get('name');
         let reg = ChainStore.getAccount( account.registrar );
         if( reg ) account.registrar_name = reg.get('name');
-       
+
         let account_name = account.name;
 
         let network_fee  = account.network_fee_percentage/100;
@@ -171,12 +171,6 @@ class AccountMembership extends React.Component {
                 <div className="no-margin grid-block vertical large-horizontal">
                     <div className="no-margin grid-block large-5">
                         <div className="grid-content">
-                            {member_status=== "lifetime" ? (
-                            <div>
-                                <h4><Translate content="account.member.referral_link"/></h4>
-                                <Translate content="account.member.referral_text"/>:
-                                <h5>{`https://bitshares.openledger.info?r=${account.name}`}</h5>
-                            </div>) : null}
                             <h4><Translate content="account.member.fee_allocation"/></h4>
                             <table className="table key-value-table">
                                 <tbody>
@@ -214,7 +208,7 @@ class AccountMembership extends React.Component {
                                 <Statistics stat_object={account.statistics}/>
                             </table>
                             <br/>
-                            <VestingBalance vb={account.cashback_vb} account={account}/>                            
+                            <VestingBalance vb={account.cashback_vb} account={account}/>
                         </div>
                     </div>
                     <div className="grid-block large-7">
