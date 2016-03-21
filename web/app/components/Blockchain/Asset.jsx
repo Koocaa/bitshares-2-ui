@@ -157,7 +157,7 @@ class Asset extends React.Component {
 
 
         // Add <a to any links included in the description
-        
+
         let description = assetUtils.parseDescription(asset.options.description);
         let desc = description.short_name ? description.short_name : description.main;
         let urlTest = /(http?):\/\/(www\.)?[a-z0-9\.:].*?(?=\s)/g;
@@ -187,7 +187,7 @@ class Asset extends React.Component {
                         description={desc}
                         issuer= {issuerName}
                     />
-                    <a style={{textTransform: "uppercase"}} href={`#/market/${asset.symbol}_${preferredMarket}`}><Translate content="exchange.market"/></a>
+                    <a style={{textTransform: "uppercase"}} href={`/market/${asset.symbol}_${preferredMarket}`}><Translate content="exchange.market"/></a>
                 </div>
         );
     }
