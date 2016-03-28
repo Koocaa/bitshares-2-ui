@@ -99,7 +99,7 @@
             your_referal_link: "Your Referral Link",
             referral_stats_for: "Referral Stats for %(name)s",
             note: "NOTE",
-            upgrade_notice_for_referral_link: "Upgrade to annual/lifetime member to engage referral program and get your exclusive referral links"
+            upgrade_notice_for_referral_link: "Upgrade to annual/lifetime member to engage referral program and get your exclusive referral links",
             available: "Sahip olunabilecek",
             referral_link: "Davet bağlantınız",
             referral_text: "Bu bağlantıyı BitShares'e davet etmek istediğiniz kişilere gönderin"
