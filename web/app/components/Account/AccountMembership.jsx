@@ -14,7 +14,7 @@ import TimeAgo from "../Utility/TimeAgo";
 import HelpContent from "../Utility/HelpContent";
 import utils from "common/utils";
 import WalletActions from "actions/WalletActions";
-import {VestingBalance} from "./AccountVesting";
+import accountUtils from "common/account_utils";
 
 @connectToStores
 class AccountRefererStats extends React.Component {
@@ -84,11 +84,8 @@ class AccountMembership extends React.Component {
         AccountActions.upgradeAccount(id, lifetime);
     }
 
-    _onClaim(e) {
-        e.preventDefault();
-        let cvb = ChainStore.getObject( this.props.account.get("cashback_vb") );
-
-        WalletActions.claimVestingBalance(this.props.account.get("id"), cvb);
+    componentWillMount() {
+        accountUtils.getFinalFeeAsset(this.props.account, "account_upgrade");
     }
 
     render() {
@@ -207,8 +204,6 @@ class AccountMembership extends React.Component {
                             <table className="table key-value-table">
                                 <Statistics stat_object={account.statistics}/>
                             </table>
-                            <br/>
-                            <VestingBalance vb={account.cashback_vb} account={account}/>
                         </div>
                     </div>
                     <div className="grid-block large-7">

@@ -11,13 +11,15 @@ import classnames from "classnames";
 import PriceText from "../Utility/PriceText";
 import TransitionWrapper from "../Utility/TransitionWrapper";
 import NumberText from "../Utility/NumberText";
+import AssetName from "../Utility/AssetName";
 
 class OrderBookRowVertical extends React.Component {
 
     shouldComponentUpdate(nextProps) {
         return (
             nextProps.order.price_full !== this.props.order.price_full ||
-            nextProps.order.amount !== this.props.order.amount
+            nextProps.order.amount !== this.props.order.amount ||
+            nextProps.index !== this.props.index
         )
     }
 
@@ -52,7 +54,8 @@ class OrderBookRowHorizontal extends React.Component {
         return (
             nextProps.order.price_full !== this.props.order.price_full ||
             nextProps.order.amount !== this.props.order.amount ||
-            nextProps.position !== this.props.position
+            nextProps.position !== this.props.position ||
+            nextProps.index !== this.props.index
         )
     }
 
@@ -292,6 +295,7 @@ class OrderBook extends React.Component {
 
                 return (horizontal ?
                     <OrderBookRowHorizontal
+                        index={index}
                         key={order.price_full}
                         order={order}
                         onClick={this.props.onClick.bind(this, "bid", order)}
@@ -304,6 +308,7 @@ class OrderBook extends React.Component {
                         position={!this.state.flip ? "left" : "right"}
                     /> :
                     <OrderBookRowVertical
+                        index={index}
                         key={order.price_full}
                         order={order}
                         onClick={this.props.onClick.bind(this, "bid", order)}
@@ -353,6 +358,7 @@ class OrderBook extends React.Component {
                 return (horizontal ?
 
                     <OrderBookRowHorizontal
+                        index={index}
                         key={order.price_full}
                         order={order}
                         onClick={this.props.onClick.bind(this, "ask", order)}
@@ -365,6 +371,7 @@ class OrderBook extends React.Component {
                         position={!this.state.flip ? "right" : "left"}
                     /> :
                     <OrderBookRowVertical
+                        index={index}
                         key={order.price_full}
                         order={order}
                         onClick={this.props.onClick.bind(this, "ask", order)}
@@ -431,9 +438,9 @@ class OrderBook extends React.Component {
             let leftHeader = (
                 <thead ref="leftHeader">
                     <tr key="top-header" className="top-header">
-                        <th style={{width: "25%", textAlign: "center"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> ({baseSymbol})</span></th>
-                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title">{baseSymbol}</span></th>
-                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title">{quoteSymbol}</span></th>
+                        <th style={{width: "25%", textAlign: "center"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> (<AssetName name={baseSymbol} />)</span></th>
+                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title"><AssetName name={baseSymbol} /></span></th>
+                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title"><AssetName name={quoteSymbol} /></span></th>
                         <th style={{width: "25%", textAlign: "right"}}>
                             <Translate className={(this.state.flip ? "ask-total" : "bid-total") + " header-sub-title"} content="exchange.price" />
                         </th>
@@ -447,9 +454,9 @@ class OrderBook extends React.Component {
                         <th style={{width: "25%", textAlign: "right"}}>
                             <Translate className={(!this.state.flip ? "ask-total" : "bid-total") + " header-sub-title"} content="exchange.price" />
                         </th>
-                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title">{quoteSymbol}</span></th>
-                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title">{baseSymbol}</span></th>
-                        <th style={{width: "25%", textAlign: "right"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> ({baseSymbol})</span></th>
+                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title"><AssetName name={quoteSymbol} /></span></th>
+                        <th style={{width: "25%", textAlign: "center"}}><span className="header-sub-title"><AssetName name={baseSymbol} /></span></th>
+                        <th style={{width: "25%", textAlign: "right"}}><Translate className="header-sub-title" content="exchange.total" /><span className="header-sub-title"> (<AssetName name={baseSymbol} />)</span></th>
                     </tr>
                 </thead>
             );
@@ -469,7 +476,7 @@ class OrderBook extends React.Component {
                                         <Translate content="exchange.total" />
                                         <span>: </span>
                                         {utils.format_number(totalAsks, quote.get("precision"))}
-                                        <span> ({quoteSymbol})</span>
+                                        <span> (<AssetName name={quoteSymbol} />)</span>
                                     </div>
                                 </div>
                                 <table className="table order-table table-hover text-right no-overflow">
@@ -510,7 +517,7 @@ class OrderBook extends React.Component {
                                         <Translate content="exchange.total" />
                                         <span>: </span>
                                         {utils.format_number(totalBids, base.get("precision"))}
-                                        <span> ({baseSymbol})</span>
+                                        <span> (<AssetName name={baseSymbol} />)</span>
                                     </div>
                                 </div>
                                 <table className="table order-table table-hover text-right">
@@ -548,10 +555,10 @@ class OrderBook extends React.Component {
                             <thead>
                                 <tr>
                                     <th style={{paddingBottom: 8, textAlign: "right", "borderBottomColor": "#777"}}>
-                                        <span className="header-sub-title">{baseSymbol}</span>
+                                        <span className="header-sub-title"><AssetName name={baseSymbol} /></span>
                                     </th>
                                     <th style={{paddingBottom: 8, textAlign: "right", "borderBottomColor": "#777"}}>
-                                        <span className="header-sub-title">{quoteSymbol}</span>
+                                        <span className="header-sub-title"><AssetName name={quoteSymbol} /></span>
                                     </th>
                                     <th style={{paddingBottom: 8, textAlign: "right", "borderBottomColor": "#777"}}>
                                         <Translate className="header-sub-title" content="exchange.price" />
@@ -580,7 +587,7 @@ class OrderBook extends React.Component {
                             <div ref="center_text" style={{minHeight: 35}}>
                                     <div key="spread" className="orderbook-latest-price" ref="centerRow">
                                         <div className="text-center spread">
-                                            {this.props.latest ? <span><PriceText preFormattedPrice={this.props.latest} /> {baseSymbol}/{quoteSymbol}</span> : null}
+                                            {this.props.latest ? <span className={this.props.changeClass}><PriceText preFormattedPrice={this.props.latest} /> <AssetName name={baseSymbol} />/<AssetName name={quoteSymbol} /></span> : null}
                                         </div>
                                     </div>
                             </div>
