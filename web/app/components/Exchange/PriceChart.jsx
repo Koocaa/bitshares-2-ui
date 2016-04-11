@@ -333,7 +333,6 @@ class PriceChart extends React.Component {
                     let vol_dec = quote.get("precision");
                     let time =  Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x);
 
-
                     if (!this.points || this.points.length === 0) {
                         return "";
                     }
@@ -344,15 +343,15 @@ class PriceChart extends React.Component {
                     return ("<div class='plot-stat'>" +
                                 "<span class='ps-t'><b>"+translate("exchange.stats.t")+"</b>" + time + "</span>" +
                                 "<span class='ps-o'><b>"+translate("exchange.stats.o")+"</b>" +
-                                Highcharts.Highcharts.numberFormat(this.points[1].point.open, price_dec, ".", ",") +
+                                Highcharts.numberFormat(this.points[1].point.open, price_dec, ".", ",") +
                                 "</span><span class='ps-h'><b>"+translate("exchange.stats.h")+"</b>" +
-                                Highcharts.Highcharts.numberFormat(this.points[1].point.high, price_dec, ".", ",") +
+                                Highcharts.numberFormat(this.points[1].point.high, price_dec, ".", ",") +
                                 "</span><span class='ps-l'><b>"+translate("exchange.stats.l")+"</b>" +
-                                Highcharts.Highcharts.numberFormat(this.points[1].point.low, price_dec, ".", ",") +
+                                Highcharts.numberFormat(this.points[1].point.low, price_dec, ".", ",") +
                                 "</span><span class='ps-c'><b>"+translate("exchange.stats.c")+"</b>" +
-                                Highcharts.Highcharts.numberFormat(this.points[1].point.close, price_dec, ".", ",") +
+                                Highcharts.numberFormat(this.points[1].point.close, price_dec, ".", ",") +
                                 "</span><span class='ps-v'><b>"+translate("exchange.stats.v")+"</b>" +
-                                Highcharts.Highcharts.numberFormat(this.points[1] ? this.points[0].point.y : 0, vol_dec, ".", ",") + " " +
+                                Highcharts.numberFormat(this.points[1] ? this.points[0].point.y : 0, vol_dec, ".", ",") + " " +
                                 quoteSymbol + "<br/>" + TA + "</span>"+
                             "</div>");
 
