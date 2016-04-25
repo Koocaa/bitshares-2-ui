@@ -45,8 +45,6 @@ class MetaexchangeDepositRequest extends React.Component {
         super(props);
 
 		let parts = props.symbol_pair.split('_');
-		props.base_symbol = parts[0];
-		props.quote_symbol = parts[1];
 
         this.state = {
             deposit_address: null,
