@@ -113,7 +113,7 @@ class FeeGroup extends React.Component {
                            );
                 }
             }
-            return (<tbody>{rows}</tbody>);
+            return (<tbody key={feename}>{rows}</tbody>);
         })
 
         return (   
@@ -128,7 +128,7 @@ class FeeGroup extends React.Component {
                        <th style={{textAlign: "right"}}><Translate content={"explorer.fees.feeltm"} /></th>
                       </tr>
                      </thead>
-                      {fees}
+                     {fees}
                     </table>
                    </div>
            );
@@ -145,7 +145,7 @@ class Fees extends React.Component {
         for (let groupName in fee_grouping) {
             let groupNameText = FeeGroupsTitle[groupName];
             let feeIds = fee_grouping[groupName];
-            feeGroups.push(<FeeGroup settings={this.props.settings} opIds={feeIds} title={groupNameText}/>);
+            feeGroups.push(<FeeGroup key={groupName} settings={this.props.settings} opIds={feeIds} title={groupNameText}/>);
         }
 
         return(
