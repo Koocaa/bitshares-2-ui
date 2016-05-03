@@ -289,7 +289,11 @@ module.exports = {
         unignore: "取消忽略",
         show_ignored: "显示已忽略账户",
         hide_ignored: "显示已忽略账户",
-        percent: "供给占比"
+        percent: "供给占比",
+        accounts: "账户",
+        home: "首页",
+        no_price: "无可用价格信息",
+        create_new: "创建新账户"
     },
     transfer: {
         from: "来自",
@@ -697,7 +701,8 @@ module.exports = {
         darkTheme: "黑色主题",
         lightTheme: "白色主题",
         olDarkTheme: "Openledger黑",
-        reset: "恢复默认值"
+        reset: "恢复默认值",
+        disableChat: "禁用聊天"
     },
     pagination: {
         newer: "更近",
@@ -789,7 +794,9 @@ module.exports = {
         to_market: "前往交易市场",
         zoom: "缩放",
         zoom_all: "显示全部",
-        settings: "图表选项"
+        settings: "图表选项",
+        featured: "热门市场",
+        "new": "新增"
     },
     markets: {
         title: "交易所",
