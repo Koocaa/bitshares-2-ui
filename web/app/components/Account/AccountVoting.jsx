@@ -479,7 +479,6 @@ class AccountVoting extends React.Component {
                 </div>
 
 
-                <div className="exchange-bordered">
                 <Tabs setting="votingTab" tabsClass="no-padding bordered-header" contentClass="grid-content">
 
                         <Tab title="account.votes.proxy_short">
@@ -613,7 +612,6 @@ class AccountVoting extends React.Component {
                             </div>
                         </Tab>
                 </Tabs>
-                </div>
             </div>
         )
     }

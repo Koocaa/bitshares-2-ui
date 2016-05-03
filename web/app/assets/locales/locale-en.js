@@ -49,6 +49,7 @@
         unignore: "Unignore",
         show_ignored: "Show ignored accounts",
         hide_ignored: "Hide ignored accounts",
+        accounts: "Accounts",
         whitelist: {
             title: "Whitelist",
             black: "Blacklist",
@@ -255,6 +256,8 @@
         follow: "Follow",
         pay: "Pay",
         overview: "Overview",
+        home: "Home",
+        welcome: "Welcome to Bitshares",
         bts_market: "Market",
         history: "History",
         payees: "Payees",
@@ -270,9 +273,11 @@
         },
         collaterals: "Collateral Positions",
         eq_value: "Equivalent Value",
+        no_price: "No price available",
         percent: "Percent of total supply",
         please_create_account: "Please create an account",
         create_account: "Create account",
+        create_new: "Create New Account",
         identicon: "Identicon",
         pay_from: "Pay From",
         existing_accounts: "Existing Accounts",
@@ -773,7 +778,9 @@
         invert: "Invert the price",
         to_market: "Go to market",
         zoom_all: "All",
-        settings: "Chart options"
+        settings: "Chart options",
+        featured: "Featured Markets",
+        new: "New"
     },
     fees: {
         title: "Fee Schedule"
