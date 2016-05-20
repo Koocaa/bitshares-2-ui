@@ -45,7 +45,7 @@ class IntlStore extends BaseStore {
             defaultLang = "en";
         }
 
-        this.currentLocale = ss.get("settings_v3") ? ss.get("settings_v3").locale : defaultLang;
+        this.currentLocale = ss.has("settings_v3") ? ss.get("settings_v3").locale : defaultLang;
         this.onSwitchLocale(this.currentLocale);
 
         this.bindListeners({
