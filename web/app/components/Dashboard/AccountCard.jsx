@@ -5,7 +5,7 @@ import {Link, PropTypes} from "react-router";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import AccountStore from "stores/AccountStore";
-import ChainStore from "api/ChainStore";
+import {ChainStore} from "graphenejs-lib";
 
 /**
  *  @brief displays the summary of a given account in a condenced view (for the dashboard)
@@ -27,7 +27,7 @@ class AccountCard extends React.Component {
     };
 
 
-    constructor(props) 
+    constructor(props)
     {
        super(props)
     }
@@ -35,7 +35,7 @@ class AccountCard extends React.Component {
     onCardClick(e) {
         e.preventDefault();
         let name = this.props.account.get('name');
-        this.context.history.pushState(null, `/account/${name}/overview/`);
+        this.context.history.push(`/account/${name}/overview/`);
     }
 
     render() {

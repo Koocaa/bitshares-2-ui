@@ -14,3 +14,4 @@ web/dist-prod
 plasma
 electron/tmp
 web/deploy_to_server.sh
+web/stats*

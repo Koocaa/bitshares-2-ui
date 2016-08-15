@@ -7,6 +7,7 @@ import Translate from "react-translate-component";
 import AccountImage from "../Account/AccountImage";
 import LinkToAccountById from "../Blockchain/LinkToAccountById";
 import SettingsActions from "actions/SettingsActions";
+import {ChainStore} from "graphenejs-lib";
 
 @BindToChainState()
 class AccountVotingProxy extends React.Component {
@@ -73,8 +74,8 @@ class AccountVotingProxy extends React.Component {
         this.setState({new_proxy_account});
     }
 
-    _onNavigate(route) {        
-        this.context.history.pushState(null, route);
+    _onNavigate(route) {
+        this.context.history.push(route);
         // this._changeTab();
     }
 
@@ -90,7 +91,7 @@ class AccountVotingProxy extends React.Component {
         if(this.state.new_proxy_account && this.props.currentAccount.get("id") === this.state.new_proxy_account.get("id")) {
             error = "cannot proxy to yourself";
         }
-        
+
         let core = ChainStore.getObject("1.3.0");
         let knownProxies = [];
         if (core && core.get("symbol")) {
@@ -127,7 +128,7 @@ class AccountVotingProxy extends React.Component {
         return (
             <div className="content-block" style={{maxWidth: "600px"}}>
                 <Translate component="h3" content="account.votes.proxy_short" />
-                <AccountSelector 
+                <AccountSelector
                     label="account.votes.proxy"
                      error={error}
                      account={this.state.current_proxy_input}

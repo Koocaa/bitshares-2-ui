@@ -4,7 +4,7 @@ import Immutable from "immutable";
 import AccountImage from "../Account/AccountImage";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import ChainStore from "api/ChainStore";
+import {ChainStore} from "graphenejs-lib";
 import FormattedAsset from "../Utility/FormattedAsset";
 import Translate from "react-translate-component";
 import connectToStores from "alt/utils/connectToStores";
@@ -24,7 +24,7 @@ class CommitteeMemberCard extends React.Component {
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.history.pushState(null, `/account/${this.props.committee_member.get("name")}`);
+        this.context.history.push(`/account/${this.props.committee_member.get("name")}`);
     }
 
     render() {
@@ -44,7 +44,7 @@ class CommitteeMemberCard extends React.Component {
                         </div>
                         <ul className="balances">
                             <li><Translate content="account.votes.votes" />: <FormattedAsset decimalOffset={5} amount={committee_member_data.get("total_votes")} asset={"1.3.0"}/></li>
-                        </ul>                        
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@ class CommitteeMemberRow extends React.Component {
 
     _onRowClick(e) {
         e.preventDefault();
-        this.context.history.pushState(null, `/account/${this.props.committee_member.get("name")}`);
+        this.context.history.push(`/account/${this.props.committee_member.get("name")}`);
     }
 
     render() {
@@ -142,9 +142,9 @@ class CommitteeMemberList extends React.Component {
                     if (!a) {return false; }
                     let account = ChainStore.getObject(a.get("committee_member_account"));
                     if (!account) { return false; }
-                    
+
                     return account.get("name").indexOf(this.props.filter) !== -1;
-                    
+
                 })
                 .sort((a, b) => {
                     let a_account = ChainStore.getObject(a.get("committee_member_account"));
@@ -270,7 +270,7 @@ class CommitteeMembers extends React.Component {
                 activeCommitteeMembers.push(globalObject.active_committee_members[key]);
             }
         }
-      
+
         return (
             <div className="grid-block">
                 <div className="grid-block page-layout">

@@ -4,7 +4,7 @@ var SettingsActions = require("../actions/SettingsActions");
 var BaseStore = require("./BaseStore");
 var counterpart = require("counterpart-instance");
 var cookies = require("cookies-js");
-var locale_en = require("assets/locales/locale-en");
+var locale_en = require("json!assets/locales/locale-en.json");
 var ls = require("common/localStorage");
 let ss = new ls("__graphene__");
 
@@ -36,17 +36,17 @@ class IntlStore extends BaseStore {
         this.localesObject = {"en": locale_en};
         this.locales = ["en","cn","fr","ko","de","es","tr"];
 
-        let defaultLang = (window.navigator.language || window.navigator.userLanguage).toLowerCase().replace(/-.*/,'');
-        if (defaultLang == "zh") {
-            defaultLang = "cn";
+        this.defaultLang = (window.navigator.language || window.navigator.userLanguage).toLowerCase().replace(/-.*/,'');
+        if (this.defaultLang == "zh") {
+            this.defaultLang = "cn";
         }
 
-        if (!this.hasLocale(defaultLang)) {
-            defaultLang = "en";
+        if (!this.hasLocale(this.defaultLang)) {
+            this.defaultLang = "en";
         }
 
-        this.currentLocale = ss.has("settings_v3") ? ss.get("settings_v3").locale : defaultLang;
-        this.onSwitchLocale(this.currentLocale);
+        this.currentLocale = ss.has("settings_v3") ? ss.get("settings_v3").locale : this.defaultLang;
+        IntlActions.switchLocale(this.currentLocale);
 
         this.bindListeners({
             onSwitchLocale: IntlActions.switchLocale,
@@ -65,19 +65,14 @@ class IntlStore extends BaseStore {
         return this.currentLocale;
     }
 
-    onSwitchLocale(locale) {
+    onSwitchLocale({locale, localeData}) {
         switch (locale) {
             case "en":
                 counterpart.registerTranslations("en", this.localesObject.en);
                 break;
 
             default:
-                let newLocale = this.localesObject[locale];
-                if (!newLocale) {
-                    newLocale = require("assets/locales/locale-" + locale);
-                    this.localesObject[locale] = newLocale;
-                }
-                counterpart.registerTranslations(locale, newLocale);
+                counterpart.registerTranslations(locale, localeData);
                 break;
         }
 
@@ -92,7 +87,7 @@ class IntlStore extends BaseStore {
     }
 
     onClearSettings() {
-        this.onSwitchLocale("en");
+        IntlActions.switchLocale(this.defaultLang);
     }
 }
 

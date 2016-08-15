@@ -8,9 +8,8 @@ import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import FormattedAsset from "../Utility/FormattedAsset";
 import EquivalentValueComponent from "../Utility/EquivalentValueComponent";
-import {operations} from "chain/chain_types";
-import ChainStore from "api/ChainStore";
-
+import {ChainStore} from "graphenejs-lib";
+let {operations} = require("graphenejs-lib").ChainTypes;
 let ops = Object.keys(operations);
 
 // Define groups and their corresponding operation ids
@@ -47,7 +46,7 @@ class FeeGroup extends React.Component {
     }
 
     render() {
-        let {globalObject, settings, opIds} = this.props;
+        let {globalObject, settings, opIds, title} = this.props;
         globalObject = globalObject.toJSON();
         const core_asset = ChainStore.getAsset("1.3.0");
 
@@ -72,7 +71,7 @@ class FeeGroup extends React.Component {
             let feename        = trxTypes[ operation_name ];
 
             let rows = []
-            let headInlucded = false
+            let headIncluded = false
             let labelClass = classNames("label", "info");
 
             for (let key in fee) {
@@ -84,8 +83,8 @@ class FeeGroup extends React.Component {
                 let equivalentAmountLTM = amount*0.2 ? <EquivalentValueComponent fromAsset="1.3.0" fullPrecision={true} amount={amount*0.2} toAsset={preferredUnit}/> : feeTypes["_none"];
                 let title = null;
 
-                if (!headInlucded) {
-                    headInlucded = true
+                if (!headIncluded) {
+                    headIncluded = true
                     title = (<td rowSpan="6" style={{width:"15em"}}>
                                <span className={labelClass}>
                                 {feename}
@@ -113,15 +112,15 @@ class FeeGroup extends React.Component {
                            );
                 }
             }
-            return (<tbody key={feename}>{rows}</tbody>);
+            return (<tbody key={feeIdx}>{rows}</tbody>);
         })
 
-        return (   
+        return (
                    <div className="asset-card">
                     <div className="card-divider">{this.props.title}</div>
                     <table className="table table-hover">
                      <thead>
-                      <tr key={this.props.title}>
+                      <tr>
                        <th><Translate content={"explorer.block.op"} /></th>
                        <th><Translate content={"explorer.fees.type"} /></th>
                        <th style={{textAlign: "right"}}><Translate content={"explorer.fees.fee"} /></th>

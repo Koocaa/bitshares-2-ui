@@ -14,7 +14,6 @@ import utils from "common/utils";
 import AutocompleteInput from "../Forms/AutocompleteInput";
 import {debounce} from "lodash";
 import LoadingIndicator from "../LoadingIndicator";
-import validation from "common/validation";
 import classnames from "classnames";
 import counterpart from "counterpart";
 import PrivateKeyStore from "stores/PrivateKeyStore";
@@ -84,13 +83,13 @@ class AccountAssets extends React.Component {
                 return 0;
             }
         }).last();
-       
+
         if (assets.size === 0 || force) {
             AssetActions.getAssetList("A", 100);
-            this.setState({assetsFetched: 100});  
+            this.setState({assetsFetched: 100});
         } else if (assets.size >= this.state.assetsFetched) {
-            AssetActions.getAssetList(lastAsset.symbol, 100);           
-            this.setState({assetsFetched: this.state.assetsFetched + 99}); 
+            AssetActions.getAssetList(lastAsset.symbol, 100);
+            this.setState({assetsFetched: this.state.assetsFetched + 99});
         }
     }
 
@@ -179,7 +178,7 @@ class AccountAssets extends React.Component {
 
     _editButtonClick(symbol, account_name, e) {
         e.preventDefault();
-        this.props.history.pushState(null, `/account/${account_name}/update-asset/${symbol}`);
+        this.props.history.push(`/account/${account_name}/update-asset/${symbol}`);
     }
 
     _onAccountSelect(account_name) {
@@ -202,7 +201,7 @@ class AccountAssets extends React.Component {
         if (!accountExists) {
             return <div className="grid-block"><h5><Translate component="h5" content="account.errors.not_found" name={account_name} /></h5></div>;
         }
-       
+
         let isMyAccount = PrivateKeyStore.hasKey(account.getIn(["owner", "key_auths", "0", "0"]));
         let myAssets = assets.filter(asset => {
             return asset.issuer === account.get("id");
@@ -213,7 +212,7 @@ class AccountAssets extends React.Component {
         .map(asset => {
             let description = assetUtils.parseDescription(asset.options.description);
             let desc = description.short_name ? description.short_name : description.main;
-            
+
             if (desc.length > 100) {
                 desc = desc.substr(0, 100) + "...";
             }
@@ -250,9 +249,9 @@ class AccountAssets extends React.Component {
             return a.indexOf(this.state.searchTerm) !== -1;
         });
 
-        return (    
+        return (
             <div className="grid-content">
-                                
+
                     <div className="content-block generic-bordered-box">
                         <div className="block-content-header">
                             <Translate content="account.user_issued_assets.issued_assets" />

@@ -4,7 +4,7 @@ import Immutable from "immutable";
 import AccountImage from "../Account/AccountImage";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import ChainStore from "api/ChainStore";
+import {ChainStore} from "graphenejs-lib";
 import FormattedAsset from "../Utility/FormattedAsset";
 import Translate from "react-translate-component";
 import TimeAgo from "../Utility/TimeAgo";
@@ -28,7 +28,7 @@ class WitnessCard extends React.Component {
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.history.pushState(null, `/account/${this.props.witness.get("name")}`);
+        this.context.history.push(`/account/${this.props.witness.get("name")}`);
     }
 
     render() {
@@ -91,7 +91,7 @@ class WitnessRow extends React.Component {
 
     _onRowClick(e) {
         e.preventDefault();
-        this.context.history.pushState(null, `/account/${this.props.witness.get("name")}`);
+        this.context.history.push(`/account/${this.props.witness.get("name")}`);
     }
 
     render() {
