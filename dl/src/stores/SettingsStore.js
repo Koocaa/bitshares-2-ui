@@ -68,7 +68,6 @@ class SettingsStore {
                 "wss://bitshares.openledger.info/ws",
                 "wss://bit.btsabc.org/ws",
                 "wss://bts.transwiser.com/ws",
-                "wss://bitshares.dacplay.org/ws",
                 "wss://dele-puppy.com/ws",
                 "wss://valen-tin.fr:8090/ws"
             ],
