@@ -66,7 +66,11 @@ class SettingsStore {
             connection: [
                 "wss://bitshares.dacplay.org/ws",
                 "wss://bitshares.openledger.info/ws",
-                "wss://dele-puppy.com/ws"
+                "wss://bit.btsabc.org/ws",
+                "wss://bts.transwiser.com/ws",
+                "wss://bitshares.dacplay.org/ws",
+                "wss://dele-puppy.com/ws",
+                "wss://valen-tin.fr:8090/ws"
             ],
             unit: [
                 CORE_ASSET,

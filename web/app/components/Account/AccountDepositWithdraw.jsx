@@ -218,7 +218,7 @@ class AccountDepositWithdraw extends React.Component {
                     {options}
                 </select>
 
-    			<div className="grid-content" style={{paddingTop: 15}}>
+    			<div className="grid-content no-padding" style={{paddingTop: 15}}>
 
                 {activeService === services.indexOf("BlockTrades (TRADE.X)") ?
                 <div>
