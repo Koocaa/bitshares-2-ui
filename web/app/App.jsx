@@ -310,7 +310,7 @@ let willTransitionTo = (nextState, replaceState, callback) => {
         cookies.set("graphene_d_r", query["r"], { expires: 604800 });
     }
 
-    let connectionString = SettingsStore.getSetting("connection");
+    let connectionString = SettingsStore.getSetting("apiServer");
 
     if (nextState.location.pathname === "/init-error") {
         return Apis.reset(connectionString, true).init_promise
@@ -362,7 +362,7 @@ let willTransitionTo = (nextState, replaceState, callback) => {
             alert("Can't access local storage.\nPlease make sure your browser is not in private/incognito mode.");
         } else {
             // replaceState(null, "/init-error");
-            replace("/init-error");
+            history.replace("/init-error");
             callback();
         }
     });
