@@ -1023,6 +1023,7 @@
   "gateway": {
     "bridge": "桥接",
     "gateway": "承兑商",
+    "fiat": "法币",
     "symbol": "资产",
     "deposit_to": "充值地址",
     "balance": "余额",
@@ -1033,17 +1034,28 @@
     "scan_qr": "扫描二维码，手机支付",
     "transwiser": {
       "gateway": "Transwiser",
-      "visit_weidian": "访问网店进行充值",
-      "deposit_title": "充值人民币到 %(asset)s",
-      "withdraw_title": "提现 %(asset)s 到人民币",
-      "alipay": "支付宝账户名",
-      "withdraw_note": "目前仅支持支付宝提现，将资产按1:1比例兑换成人民币发送到您的支付宝账户中",
-      "you_will_receive": "您将收到 %(amount)s 元人民币"
+      "isit_weidian": "访问网店进行充值",
+      "eposit_title": "充值 %(depositAsset)s 到 %(receiveAsset)s",
+      "ithdraw_title": "提现 %(withdrawAsset)s 到 %(receiveAsset)s",
+      "lipay": "支付宝账户名",
+      "ithdraw_note": "目前仅支持支付宝提现，将资产按1:1比例兑换成人民币发送到您的支付宝账户中",
+      "ou_will_receive": "您将收到 %(amount)s 元人民币",
+      "ridge_text": "桥接能让你将一种资产转变成另一种资产，比如从 TUSD 转换到 bitUSD。",
+      "ateway_text": "网关能让你将BitShares中的资产与外部资产进行互换，比如TRANS.DAO到DAO。",
+      "iat_text": "法币的充提现服务。下面是支持的货币：",
+      "etch_data_error": "获取服务数据错误",
+      "eload": "刷新重试",
+      "o_service": "服务暂时不可用",
+      "earn_more": "查看详情",
+      "eposit_disabled": "充值服务暂时不可用",
+      "ithdraw_disabled": "提现服务暂时不可用"
     },
     "meta": {
       "open_website": "访问官网"
     },
     "generate_new": "生成新地址",
+    "generate_new_succ": "新地址生成成功: %(address)s",
+    "generate_new_fail": "地址生成失败: %(reason)s ",
     "calc": "计算中",
     "website": "访问网站",
     "withdraw_now": "提现",
@@ -1067,7 +1079,7 @@
     "limit": "限额: %(amount)s %(symbol)s",
     "bridge_text": "桥接能让你将一种资产转变成另一种资产，比如从 BTC 转换到 BTS。",
     "gateway_text": "网关能让你将BitShares中的资产与外部资产进行互换，比如OPEN.BTC到BTC。",
-    "fiat_text": "法币的冲提现服务由CCEDK提供。你必须先行在CCEDK上进行账户注册。下面是支持的货币：",
+    "fiat_text": "法币的充提现服务由CCEDK提供。你必须先行在CCEDK上进行账户注册。下面是支持的货币：",
     "service": "转账服务"
   },
   "propose": "提议",

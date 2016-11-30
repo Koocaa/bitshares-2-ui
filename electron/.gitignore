@@ -3,3 +3,4 @@ build/*
 !build/package.json
 !build/vendor
 releases
+tmp

@@ -7,7 +7,7 @@ import Translate from "react-translate-component";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import WalletDb from "stores/WalletDb";
-import TranswiserDepositWithdraw from "../DepositWithdraw/transwiser/TranswiserDepositWithdraw";
+import TranswiserService from "../DepositWithdraw/transwiser/TranswiserService";
 import BlockTradesBridgeDepositRequest from "../DepositWithdraw/blocktrades/BlockTradesBridgeDepositRequest";
 import BlockTradesGatewayDepositRequest from "../DepositWithdraw/blocktrades/BlockTradesGatewayDepositRequest";
 import BlockTradesGateway from "../DepositWithdraw/BlockTradesGateway";
@@ -259,7 +259,7 @@ class AccountDepositWithdraw extends React.Component {
                             </div>
                             <div className="button-group" style={{marginBottom: 0}}>
                                 <div onClick={this.toggleOLService.bind(this, "gateway")} className={cnames("button", olService === "gateway" ? "active" : "outline")}><Translate content="gateway.gateway" /></div>
-                                <div onClick={this.toggleOLService.bind(this, "fiat")} className={cnames("button", olService === "fiat" ? "active" : "outline")}>Fiat</div>
+                                <div onClick={this.toggleOLService.bind(this, "fiat")} className={cnames("button", olService === "fiat" ? "active" : "outline")}><Translate content="gateway.fiat" /></div>
                             </div>
 
 
@@ -285,33 +285,7 @@ class AccountDepositWithdraw extends React.Component {
 
                     {activeService === services.indexOf("Transwiser") ?
                     <div>
-                        <div className="float-right"><a href="http://www.transwiser.com" target="_blank"><Translate content="gateway.website" /></a></div>
-                        <table className="table">
-                            <thead>
-                            <tr>
-                                <th><Translate content="gateway.symbol" /></th>
-                                <th><Translate content="gateway.deposit_to" /></th>
-                                <th><Translate content="gateway.balance" /></th>
-                                <th><Translate content="gateway.withdraw" /></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <TranswiserDepositWithdraw
-                                issuerAccount="transwiser-wallet"
-                                account={account.get('name')}
-                                receiveAsset="TCNY" />
-                            <TranswiserDepositWithdraw
-                                issuerAccount="transwiser-wallet"
-                                account={account.get('name')}
-                                receiveAsset="CNY" />
-                            {/*
-                            <TranswiserDepositWithdraw
-                                issuerAccount="transwiser-wallet"
-                                account={this.props.account.get('name')}
-                                receiveAsset="BOTSCNY" />
-                            */}
-                            </tbody>
-                        </table>
+                      <TranswiserService account={account} />
                     </div> : null}
 
                 </div>
