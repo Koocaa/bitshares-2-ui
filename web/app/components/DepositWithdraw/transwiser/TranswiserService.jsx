@@ -48,7 +48,9 @@ export default class TranswiserService extends React.Component {
       reload: false
     }
 
-    this.apiUrl = "http://localhost:3000/api/v2/setting";
+    // this.apiUrl = "http://localhost:3000/api/v2/setting";
+    this.apiUrl = "https://transapi.dacplay.org/api/v2/setting";
+
   }
 
   componentDidMount(){

@@ -64,7 +64,8 @@ class GatewayDepositButton extends React.Component {
     super(props);
 
     // TODO: move api to global config
-    this.requestNewAddressApiUrl = "http://localhost:3000/api/v2/request_address";
+    // this.requestNewAddressApiUrl = "http://localhost:3000/api/v2/request_address";
+    this.requestNewAddressApiUrl = "https://transapi.dacplay.org/api/v2/request_address";
     this.state = { depositAddress: props.setting.depositAddress || null }
   }
 
