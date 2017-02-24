@@ -92,14 +92,14 @@ class BlockTradesGateway extends React.Component {
         });
 
         let coinOptions = filteredCoins.map(coin => {
-            let option = action === "deposit" ? coin.walletSymbol.toUpperCase() : coin.symbol;
+            let option = action === "deposit" ? coin.backingCoinType.toUpperCase() : coin.symbol;
             return <option value={option} key={coin.symbol}>{option}</option>;
         }).filter(a => {
             return a !== null;
         });
 
         let coin = filteredCoins.filter(coin => {
-            return (action === "deposit" ? coin.walletSymbol.toUpperCase() === activeCoin : coin.symbol === activeCoin);
+            return (action === "deposit" ? coin.backingCoinType.toUpperCase() === activeCoin : coin.symbol === activeCoin);
         })[0];
 
         let issuers = {
@@ -137,26 +137,24 @@ class BlockTradesGateway extends React.Component {
                             {coinOptions}
                         </select>
                     </div>
-
                     <div style={{marginBottom: 15}}>
                         <BlockTradesGatewayDepositRequest
                             key={`${provider}.${coin.symbol}`}
                             gateway={provider}
                             issuer_account={issuer.name}
                             account={account}
-                            deposit_asset={coin.walletSymbol.toUpperCase()}
+                            deposit_asset={coin.backingCoinType.toUpperCase()}
                             deposit_asset_name={coin.name}
-                            deposit_coin_type={coin.backingCoinType}
+                            deposit_coin_type={coin.backingCoinType.toLowerCase()}
                             deposit_account={coin.depositAccount}
                             deposit_wallet_type={coin.walletType}
                             receive_asset={coin.symbol}
-                            receive_coin_type={coin.coinType}
-                            supports_output_memos={coin.supportsOutputMemos}
+                            receive_coin_type={coin.symbol.toLowerCase()}
+                            supports_output_memos={coin.supportsMemos}
                             action={this.state.action}
                         />
                         <div style={{padding: 15}}><Translate content="gateway.support_block" /> <a href={"mailto:" + issuer.support}>{issuer.support}</a></div>
                     </div>
-
                     {coin && coin.symbol ?
                     <TransactionWrapper
                         asset={coin.symbol}
@@ -168,7 +166,6 @@ class BlockTradesGateway extends React.Component {
                             isDeposit ? ( this.props.account.get("id") ) :
                             (issuer.id)
                         }
-
                     >
                         { ({asset, to, fromAccount}) => {
                             return <RecentTransactions
