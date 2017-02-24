@@ -1,22 +1,15 @@
 import React from "react";
-import {Link} from "react-router";
-import connectToStores from "alt/utils/connectToStores";
+import {Link} from "react-router/es";
 import Translate from "react-translate-component";
-import FormattedAsset from "../Utility/FormattedAsset";
-import LoadingIndicator from "../LoadingIndicator";
-import {ChainStore} from "graphenejs-lib";
+import {ChainStore} from "bitsharesjs/es";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import Statistics from "./Statistics";
 import AccountActions from "actions/AccountActions";
-import Icon from "../Icon/Icon";
 import TimeAgo from "../Utility/TimeAgo";
 import HelpContent from "../Utility/HelpContent";
-import utils from "common/utils";
-import WalletActions from "actions/WalletActions";
 import accountUtils from "common/account_utils";
 
-@connectToStores
 class AccountRefererStats extends React.Component {
     static propTypes = {
         accountName: React.PropTypes.string.isRequired
@@ -36,7 +29,7 @@ class AccountRefererStats extends React.Component {
         return (
             <div>
             <section className="content-block">
-                <div className="medium-12"><Translate content="account.member.your_referal_link" />: <span style={{borderBottom:"1px solid #444", padding:"5px 10px"}}>https://bitshares.dacplay.org?r={this.props.accountName}</span></div>
+                <div className="medium-12"><Translate content="account.member.referral_link" />: <span style={{borderBottom:"1px solid #444", padding:"5px 10px"}}>https://bitshares.dacplay.org?r={this.props.accountName}</span></div>
             </section>
             {
                 stats ? (
@@ -64,11 +57,11 @@ class AccountRefererStats extends React.Component {
             </div>
         );
     }
-}
+};
+AccountRefererStats = BindToChainState(AccountRefererStats);
 
-@BindToChainState()
 class FeeHelp extends React.Component {
-       static propTypes = {
+    static propTypes = {
         dprops: ChainTypes.ChainObject.isRequired
     };
     static defaultProps = {
@@ -88,8 +81,8 @@ class FeeHelp extends React.Component {
         );
     }
 }
+FeeHelp = BindToChainState(FeeHelp);
 
-@BindToChainState({keep_updating:false})
 class AccountMembership extends React.Component {
 
     static propTypes = {
@@ -243,5 +236,6 @@ class AccountMembership extends React.Component {
         );
     }
 }
+AccountMembership = BindToChainState(AccountMembership);
 
 export default AccountMembership;

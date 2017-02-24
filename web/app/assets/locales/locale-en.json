@@ -6,7 +6,8 @@
     "ko": "한국어",
     "de": "Deutsch",
     "es": "Español",
-    "tr": "Turkish"
+    "tr": "Turkish",
+    "ru": "Русский"
   },
   "sync_fail": {
     "title": "Failed to sync with the API server",
@@ -14,7 +15,7 @@
     "sub_text_2" : "Once you've synchronized your clock, please refresh this page. If your clock is already correct, the API server you're using could be out of sync. In that case, please try a different server from the list below."
   },
   "header": {
-    "title": "Bitshares UI",
+    "title": "BitShares UI",
     "account": "Account",
     "dashboard": "Dashboard",
     "explorer": "Explore",
@@ -26,16 +27,56 @@
     "create_account": "Create Account",
     "create_asset": "Create Asset",
     "update_asset": "Update Asset",
-    "lock": "Lock Wallet",
-    "unlock": "Unlock Wallet",
+    "lock": "Log out (lock the wallet)",
+    "unlock": "Log in (unlock the wallet)",
     "help": "Help",
-    "locked_tip": "Wallet is locked.<br/>Click to unlock.",
-    "unlocked_tip": "Wallet is unlocked.<br/>Click to lock."
+    "locked_tip": "<br/>Click to login by unlocking your wallet.<br/><br/>Closing the browser window will also log you out.",
+    "unlocked_tip": "<br/>Click to log out by locking your wallet.<br/><br/>Closing the browser window will also log you out."
+  },
+  "tooltip": {
+    "call_limit": "This is the call price of the least collateralized margin position in the market.",
+    "margin_price": "This is the maximum price that a margin called position can be made to pay. It also called the Squeeze Price.",
+    "settle_price": "This is the price at which settle orders will execute.",
+    "sign_owner": "If you are the owner of this account, please check this to make sure the transaction gets signed properly. This is only necessary if you are using the owner account and that account is not included in the active permissions.",
+    "latest_price": "This is the latest price seen in this market.",
+    "no_price": "There's no recent price available for this asset that can be used to estimate its value.",
+    "hide_asset": "Click here to hide this asset from this list.",
+    "show_asset": "Click here to show this asset in the main list.",
+    "settle": "Settling will let you convert your holdings of %(asset)s to BTS after a delay of 24 hours, at a price equal to the feed price at that time.",
+    "filter_ops": "Use this list to filter your history by operation type.",
+    "show_block": "Click here to show block #%(block)s where this transaction occurred.",
+    "coll_ratio": "The collateral ratio of the position is COLLATERAL * FEED PRICE / DEBT.",
+    "call_price": "This is the call price of the position. If the feed price goes below the call price, the position will be margin called.",
+    "close_position": "Click here to close your position. You will need to have at least %(amount)s %(asset)s in order to do so.",
+    "update_position": "Click here to update your position. You may at any time change the debt and/or collateral levels of your position.",
+    "cr_danger": "This position is currently being margin called. Consider adding collateral to bring the collateral ratio above %(mr)s or closing the position.",
+    "cr_warning": "This position has a low level of collateral, and will get margin called if the collateral ratio drops below %(mr)s. Consider adding collateral or closing the position.",
+    "propose_scam": "This proposal was created by a known scammer, do not approve it!",
+    "login": "This BitShares wallet does not offer a traditional login but instead simply locks or unlocks a wallet that is <b>only</b> stored locally in your browser.<br/><br/>Whenever you close the wallet it will be locked and you will effectively be logged out.",
+    "buy_min": "You will receive at minimum this amount. If there are matching orders with a cheaper price than you specified, you will receive more than this amount.",
+    "borrow": "Borrow %(asset)s from the network. This creates a smart contract that locks your collateral until you either modify the position or a margin call is required.",
+    "transfer_actions": "Click here to make a transfer, or to deposit/withdraw those assets that support it.",
+    "deposit_tip": "To complete the deposit, go to your %(asset)s wallet and make a transfer to the address listed on this page. You will receive the deposit as soon as it has been confirmed. If a memo is shown , it is essential that you include this memo in your transfer.",
+    "copy_tip": "Click to copy the text",
+    "withdraw_full": "Click to withdraw the full balance",
+    "withdraw_address": "If you don't already have a %(asset)s address, please find a wallet provider and create one in order to complete the withdrawal."
   },
   "propose": "Propose",
   "cancel": "Cancel",
   "account": {
-    "welcome": "Welcome to Bitshares",
+    "intro_text_title": "Welcome to the Bitshares DEX",
+    "intro_text_1": "<b>BitShares 2.0</b> and its decentralized exchange - also known as The DEX - is a next-generation cryptocurrency trading platform.",
+    "intro_text_2": "<b>The DEX</b> is inherently decentralized, enabling you to trade the BitShares core token (BTS) and a range of trustless price-stable, market-pegged  assets such as bitUSD, bitCNY, bitBTC, bitGold and more.  These assets can all be traded with zero counter-party risk, putting you in total control of your funds.",
+    "intro_text_3": "<b>The DEX</b> also enables user-issued assets (UIAs), which can be traded via an order book against any other asset on the platform, both trustless and user-issued.  One well-known issuer on the platform is <b>OpenLedger</b>, with a host of assets including BTC, ETH, STEEM, DASH, LTC, DOGE, and many more.",
+    "intro_text_4": "This gives cryptocurrency traders a unique blend of traditional and decentralized trading, all in a familiar exchange interface. Happy trading!",
+    "in_open": "This is the amount of %(asset)s you have in open orders.",
+    "in_open_value": "This is the equivalent value of the %(asset)s you have in open orders.",
+    "transfer_actions": "Transfer actions",
+    "market_actions": "Market actions",
+    "see_open": "See open orders",
+    "total_estimate": "This is the estimated value of all your assets, including any hidden assets, open orders, debt and collateral. The estimate is done using only live blockchain data and may not be perfectly accurate.",
+    "trade": "Trade",
+    "welcome": "Welcome to BitShares",
     "asset": "Asset",
     "market_value": "Market Value",
     "hour_24": "24hr Change",
@@ -108,7 +149,7 @@
       "claim_all": "Try to claim all",
       "available": "Available to claim",
       "referral_link": "Your referral link",
-      "referral_text": "Give this to link to people you want to refer to Bitshares"
+      "referral_text": "Give this to link to people you want to refer to BitShares"
     },
     "user_issued_assets": {
       "symbol": "Symbol",
@@ -190,15 +231,17 @@
       "warning3": "Account is already in the list",
       "warning4": "Key is already in the list",
       "action": "Action",
-      "acct_or_key": " Account / Key / Address",
+      "acct_or_key": "Account / Key / Address",
       "key_viewer": "Private key viewer",
       "public": "Public key",
       "private": "Private key (WIF - Wallet Import Format)",
       "show": "show",
       "brain": "Brainkey position",
-      "from": "Imported from account"
+      "from": "Imported from account",
+      "sign_owner": "Sign as owner"
     },
     "votes": {
+      "proxy_current": "Your current proxy is",
       "proxy_short": "Proxy",
       "workers_short": "Workers",
       "proxy": "Proxy Voting Account",
@@ -238,8 +281,8 @@
       "creator": "Creator",
       "recycled": "Recycled",
       "funding": "Funding",
-      "total_budget": "Total available worker budget",
-      "unused_budget": "Unused worker budget",
+      "total_budget": "Total available daily worker budget",
+      "unused_budget": "Unused daily worker budget",
       "new": "Proposed workers",
       "active": "Active workers",
       "w_approved_by": "Witnesses approved by %(account)s",
@@ -274,9 +317,9 @@
       "unknown": "Unknown account",
       "not_yours": "Not your account"
     },
-    "collaterals": "Collateral Positions",
+    "collaterals": "Margin Positions",
     "eq_value": "Equivalent Value",
-    "no_price": "No price available",
+    "no_price": "Unknown value",
     "percent": "Percent of total supply",
     "please_create_account": "Please create an account",
     "create_account": "Create account",
@@ -347,7 +390,7 @@
     "limit_order_buy": "{account} placed an order to buy {amount} at {price}",
     "limit_order_cancel": "{account} cancelled order #%(order)s",
     "call_order_update": "{account} changed {debtSymbol} debt by {debt} and collateral by {collateral}",
-    "asset_reserve": "{account} reserved {amount}",
+    "asset_reserve": "{account} reserved (burnt) {amount}",
     "asset_issue": "{account} issued {amount} to {to}",
     "asset_fund_fee_pool": "{account} funded {asset} fee pool with {amount}",
     "asset_create": "{account} created the asset {asset}",
@@ -381,6 +424,7 @@
     "status": "Status",
     "asset_create": "Create the asset %(asset)s using the account {account}",
     "asset_update": "Update the asset {asset} using the account {account}",
+    "asset_settle": "Request a settlement of",
     "update": {
       "active_approvals_to_add": "Active approvals to add",
       "active_approvals_to_remove": "Active approvals to remove",
@@ -391,7 +435,9 @@
     },
     "approve": "Approve",
     "reject": "Reject",
-    "override_transfer": "Transfer {amount} from {from} to {to} by authority of {issuer}"
+    "override_transfer": "Transfer {amount} from {from} to {to} by authority of {issuer}",
+    "asset_issue": "Issue {amount} to {to} using {account}",
+    "asset_reserve": "Reserve (burn) {amount} using {account}"
   },
   "transaction": {
     "confirm": "Please confirm the transaction",
@@ -728,10 +774,11 @@
     "lookup_text": "Click the button below to check for unclaimed balances from BTS 1.0",
     "delete_select": "Select wallet to delete",
     "restore_brainkey_text": "In order to restore from a brainkey, you will need to create a new wallet. Please provide a password and name for your new wallet below, then enter your brainkey.",
-    "restore_key_count": "# of keys"
+    "restore_key_count": "# of keys",
+    "restore_default_success": "Settings have been reset successfully"
   },
   "footer": {
-    "title": "Bitshares",
+    "title": "BitShares",
     "block": "Head block",
     "loading": "Loading...",
     "backup": "A Backup is Required",
@@ -740,6 +787,23 @@
     "brainkey": "Backup brainkey recommended"
   },
   "exchange": {
+    "chart_options": {
+        "tools": "Tools",
+        "title": "Indicators",
+        "sma": "SMA",
+        "ema1": "EMA 1",
+        "ema2": "EMA 2",
+        "smaVolume": "SMA",
+        "macd": "MACD chart",
+        "bb": "Bollinger Bands",
+        "fib": "Draw Fibonacci retracement",
+        "trendline": "Draw trend line",
+        "volume": "Show volume chart",
+        "period": "Period",
+        "height": "Chart height",
+        "price_title": "Price indicators",
+        "volume_title": "Volume indicators"
+    },
     "market": "Market",
     "price_history": "Price Chart",
     "order_depth": "Market Depth",
@@ -763,19 +827,19 @@
     "spread": "Spread",
     "quantity": "Amount",
     "buy": "Buy",
+    "buy_min": "Buy at least",
     "sell": "Sell",
     "receive": "Receive",
     "vertical": "Vertical",
     "horizontal": "Horizontal",
-    "confirm_buy": "Confirm order: Buy %(buy_amount)s %(buy_symbol)s at a price of %(price_amount)s %(price_symbol)s",
-    "confirm_sell": "Confirm order: Sell %(sell_amount)s %(sell_symbol)s at a price of %(price_amount)s %(price_symbol)s",
     "market_name": "My Markets",
     "quote_supply": "Quote supply",
     "base_supply": "Base supply",
     "more": "Find markets",
     "volume_24": "24hr Volume",
     "change": "Change",
-    "confirm": "Your order is %(diff)s% away from the current price, are you sure?",
+    "confirm_buy": "Your order is %(diff)s times higher than the lowest ask, are you sure?",
+    "confirm_sell": "Your order is %(diff)s times lower than the highest bid, are you sure?",
     "indicators": "Indicators",
     "rsi": "Relative Strength Index",
     "ema": "Exponential Moving Average",
@@ -808,7 +872,8 @@
     "zoom_all": "All",
     "settings": "Chart options",
     "featured": "Featured Markets",
-    "new": "New"
+    "new": "New",
+    "market_frozen": "The owner of %(asset)s has disabled trading in this market."
   },
   "fees": {
     "title": "Fee Schedule"
@@ -850,7 +915,7 @@
     "create_backup": "Create Backup",
     "backup_brainkey": "Backup Brainkey",
     "create_backup_of": "Create backup now",
-    "import_backup": "Import Bitshares 2.0 backup (.bin file)",
+    "import_backup": "Import BitShares 2.0 backup (.bin file)",
     "import_backup_choose": "Please select your backup file in the dialog below. This is completely safe as the file is not uploaded anywhere and never leaves your browser.",
     "restore_backup": "Restore Backup",
     "import_keys": "Import Keys",
@@ -885,7 +950,6 @@
     "balance_claim_lookup": "Lookup balances",
     "unclaimed": "Unclaimed balances belonging to these keys",
     "unclaimed_vesting": "Unclaimed (vesting)",
-    "brainkey_no_match": "",
     "reenter_brainkey": "Re-Enter Brainkey",
     "pwd4brainkey": "Enter your password to show your brainkey",
     "show_brainkey": "Show Brainkey",
@@ -898,8 +962,8 @@
     "need_backup": "This wallet needs a backup",
     "noneed_backup": "No backup is needed",
     "restore": "Restore Wallet from Backup",
-    "create_text": "The Bitshares wallet is stored in your browser, it is not stored in the cloud. A wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
-    "account_create_wallet_text": "This password will be used to create a new Bitshares wallet for you, which will only be stored locally in your browser. A Bitshares wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
+    "create_text": "The BitShares wallet is stored in your browser, it is not stored in the cloud. A wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
+    "account_create_wallet_text": "This password will be used to create a new BitShares wallet for you, which will only be stored locally in your browser. A BitShares wallet can contain multiple accounts and can be easily transferred between browsers and computers using a backup file.",
     "create_account_text": "Please enter your desired account name. This name will be registered publicly on the blockchain and is your identifer for any transactions you make.",
     "first_account_paid": "Since this is your first account, a faucet will pay the registration fee for you.",
     "must_be_ltm": "The fee paying account must be a lifetime member to perform that operation.",
@@ -923,7 +987,7 @@
     "import_bts": "Import a BTS 0.9.3c key export",
     "import_private_key": "Import a private key",
     "wallet_browser": "Your Web Browser is your Wallet",
-    "has_wallet": "When you create your first Bitshares account, a Bitshares wallet will be automatically created as well and stored in your browser.",
+    "has_wallet": "When you create your first BitShares account, a BitShares wallet will be automatically created as well and stored in your browser.",
     "go_get_started": "See Get Started tips",
     "wallet_crucial": "Your wallet is only stored in your browser, so it is crucial that you create a backup that will enable you to recover your wallet if the data in your browser is lost!",
     "wallet_move": "This backup file can also be used to move your wallet to different computers or different browsers.",
@@ -936,7 +1000,7 @@
     "tips_settings": "Change the settings",
     "tips_account": "See your new account",
     "link_account": "Account",
-    "wallet_new": "New Bitshares account",
+    "wallet_new": "New BitShares account",
     "create_w_a": "Create a wallet and an account",
     "create_a": "Create a new account",
     "create_success": "Your wallet has been created",
@@ -955,11 +1019,12 @@
     "no_valid": "No valid feeds for %(asset_symbol)s",
     "coll_ratio": "Collateral ratio",
     "call_limit": "Market Call Limit",
-    "adjust": "Update Position",
-    "close": "Close Position",
+    "adjust": "Update position",
+    "close": "Close position",
     "update": "Update",
     "errors": {
-      "below": "Collateral ratio is too low, this position will be margin called instantly",
+      "below": "Your collateral ratio is below %(mr)s which is not allowed.",
+      "close": "Your collateral ratio is close to %(mr)s which means this position is in danger of being margin called if the price drops.",
       "collateral": "Insufficient collateral balance"
     }
   },
@@ -977,6 +1042,10 @@
     "deposit": {
       "amount": "Amount to Deposit",
       "submit": "Deposit"
+    },
+    "convert": {
+      "amount": "Amount to Convert",
+      "submit": "Ok"
     },
     "settle": {
       "title": "Request settlement of %(asset)s",
@@ -1003,7 +1072,7 @@
     "connected": "Connected",
     "not_connected": "Not connected",
     "browser": "Unsupported browser",
-    "browser_text": "The Browser you are using has not been fully tested to support the Bitshares Wallet. We highly recommend that you backup your wallet and import it using the Chrome Browser until we have had more time to fully test your browser of choice. Use at your own risk.",
+    "browser_text": "The Browser you are using has not been fully tested to support the BitShares Wallet. We highly recommend that you backup your wallet and import it using the Chrome Browser until we have had more time to fully test your browser of choice. Use at your own risk.",
     "understand": "I understand"
   },
   "refcode": {
@@ -1025,12 +1094,18 @@
     "symbol": "Symbol",
     "website": "Visit the website",
     "deposit_to": "Please send your %(asset)s to the address below",
+    "add_funds": "You are going to add funds to your BitShares account.",
+    "withdraw_funds": "You are going to withdraw funds from your BitShares account to your external %(asset)s account.",
+    "balance_asset": "Current %(asset)s balance",
+    "withdraw_placeholder": "Please enter your %(asset)s address",
     "balance": "Current balance",
     "generate": "Generate",
     "generate_new": "Get new address",
     "deposit": "Deposit",
     "withdraw": "Withdrawal",
+	"convert": "Internal conversion",
     "withdraw_now": "Withdraw now",
+	"convert_now": "Convert now",
     "inventory": "Inventory",
     "scan_qr": "Scan QR",
     "calc": "Calculating",
@@ -1051,9 +1126,10 @@
     "support_block": "For support, please contact Blocktrades at:",
     "valid_address": "Please enter a valid %(coin_type)s address",
     "withdraw_coin": "Withdraw %(coin)s (%(symbol)s)",
+	"convert_coin": "Convert to %(coin)s (%(symbol)s)",
     "limit": "Limit: %(amount)s %(symbol)s",
     "bridge_text": "A bridge lets you 'shapeshift' an asset into another one, for example BTC to BTS.",
-    "gateway_text": "A gateway lets you move to and from Bitshares assets to the real asset, like OPEN.BTC to BTC.",
+    "gateway_text": "A gateway lets you move to and from BitShares assets to the real asset, like OPEN.BTC to BTC.",
     "fiat_text": "Fiat deposits and withdrawal are provided by CCEDK. In order to get started you need to complete the registration process. The following conversions are available:",
     "transwiser": {
       "gateway": "Transwiser",
@@ -1076,13 +1152,12 @@
     "user": "Username",
     "done": "Done",
     "reconnect": "Reconnect",
-    "welcome_user": "Welcome to Bitshares",
+    "welcome_user": "Welcome to BitShares",
     "users": "%(count)s users online",
     "welcome": "This is a peer to peer chatroom, with no moderation and no guaranteed unique usernames. It can be disabled in the settings. Message frequency is limited to one per 2 seconds, and message length to 140 characters. For a list of available commands, type /help.",
     "disconnected": "You are currently not connected to any peers or the central server, please click below to reconnect. If you are unable to connect, this might mean the server is down, please try again later.",
     "rate": "Please wait at least 2s before posting a new message",
     "disabled": "Chat disabled",
     "enable": "Enable chat now"
-
   }
 }

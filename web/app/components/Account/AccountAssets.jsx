@@ -1,6 +1,6 @@
 import React from "react";
 import {PropTypes} from "react";
-import {Link} from "react-router";
+import {Link} from "react-router/es";
 import Translate from "react-translate-component";
 import AssetActions from "actions/AssetActions";
 import AssetStore from "stores/AssetStore";
@@ -11,27 +11,15 @@ import FormattedAsset from "../Utility/FormattedAsset";
 import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 import notify from "actions/NotificationActions";
 import utils from "common/utils";
-import AutocompleteInput from "../Forms/AutocompleteInput";
 import {debounce} from "lodash";
 import LoadingIndicator from "../LoadingIndicator";
-import classnames from "classnames";
-import counterpart from "counterpart";
 import PrivateKeyStore from "stores/PrivateKeyStore";
-import IssueModal from "../Modal/IssueModal"
-import ReserveAssetModal from "../Modal/ReserveAssetModal"
-import connectToStores from "alt/utils/connectToStores";
+import IssueModal from "../Modal/IssueModal";
+import ReserveAssetModal from "../Modal/ReserveAssetModal";
+import { connect } from "alt-react";
 import assetUtils from "common/asset_utils";
 
-@connectToStores
 class AccountAssets extends React.Component {
-    static getStores() {
-        return [AssetStore]
-    }
-
-    static getPropsFromStores() {
-        return {assets: AssetStore.getState().assets}
-    }
-
     static defaultProps = {
         symbol: "",
         name: "",
@@ -178,7 +166,7 @@ class AccountAssets extends React.Component {
 
     _editButtonClick(symbol, account_name, e) {
         e.preventDefault();
-        this.props.history.push(`/account/${account_name}/update-asset/${symbol}`);
+        this.props.router.push(`/account/${account_name}/update-asset/${symbol}`);
     }
 
     _onAccountSelect(account_name) {
@@ -309,4 +297,11 @@ class AccountAssets extends React.Component {
     }
 }
 
-export default AccountAssets;
+export default connect(AccountAssets, {
+    listenTo() {
+        return [AssetStore];
+    },
+    getProps() {
+        return {assets: AssetStore.getState().assets};
+    }
+});

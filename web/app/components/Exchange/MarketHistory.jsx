@@ -1,7 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {PropTypes} from "react";
-import {Link} from "react-router";
+import {Link} from "react-router/es";
 import Immutable from "immutable";
 import Ps from "perfect-scrollbar";
 import utils from "common/utils";
@@ -12,29 +11,18 @@ import NumberText from "../Utility/NumberText";
 import cnames from "classnames";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
-import connectToStores from "alt/utils/connectToStores";
+import { connect } from "alt-react";
 import TransitionWrapper from "../Utility/TransitionWrapper";
 import AssetName from "../Utility/AssetName";
-let {operations} = require("graphenejs-lib").ChainTypes;
+import { ChainTypes as grapheneChainTypes } from "bitsharesjs/es";
+const {operations} = grapheneChainTypes;
 
-@connectToStores
 class MarketHistory extends React.Component {
-
-    static getStores() {
-        return [SettingsStore]
-    }
-
-    static getPropsFromStores() {
-        return {
-            viewSettings: SettingsStore.getState().viewSettings
-        }
-    }
-
     constructor(props) {
         super();
         this.state = {
             activeTab: props.viewSettings.get("historyTab", "history")
-        }
+        };
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -48,12 +36,12 @@ class MarketHistory extends React.Component {
     }
 
     componentDidMount() {
-        let historyContainer = ReactDOM.findDOMNode(this.refs.history);
+        let historyContainer = this.refs.history;
         Ps.initialize(historyContainer);
     }
 
     componentDidUpdate() {
-        let historyContainer = ReactDOM.findDOMNode(this.refs.history);
+        let historyContainer = this.refs.history;
         Ps.update(historyContainer);
     }
 
@@ -230,4 +218,13 @@ MarketHistory.propTypes = {
     history: PropTypes.object.isRequired
 };
 
-export default MarketHistory;
+export default connect(MarketHistory, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            viewSettings: SettingsStore.getState().viewSettings
+        };
+    }
+});

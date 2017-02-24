@@ -1,27 +1,22 @@
 import React from "react";
-import {Link} from "react-router";
-import connectToStores from "alt/utils/connectToStores";
+import { connect } from "alt-react";
 import accountUtils from "common/account_utils";
 import utils from "common/utils";
 import Translate from "react-translate-component";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import WalletDb from "stores/WalletDb";
 import TranswiserDepositWithdraw from "../DepositWithdraw/transwiser/TranswiserDepositWithdraw";
 import BlockTradesBridgeDepositRequest from "../DepositWithdraw/blocktrades/BlockTradesBridgeDepositRequest";
-import BlockTradesGatewayDepositRequest from "../DepositWithdraw/blocktrades/BlockTradesGatewayDepositRequest";
 import BlockTradesGateway from "../DepositWithdraw/BlockTradesGateway";
 import OpenLedgerFiatDepositWithdrawal from "../DepositWithdraw/openledger/OpenLedgerFiatDepositWithdrawal";
 import OpenLedgerFiatTransactionHistory from "../DepositWithdraw/openledger/OpenLedgerFiatTransactionHistory";
-import Tabs from "../Utility/Tabs";
 import HelpContent from "../Utility/HelpContent";
-import Post from "common/formPost";
 import cnames from "classnames";
 import AccountStore from "stores/AccountStore";
 import SettingsStore from "stores/SettingsStore";
 import SettingsActions from "actions/SettingsActions";
+import {fetchCoins, getBackedCoins} from "common/blockTradesMethods";
 
-@BindToChainState()
 class AccountDepositWithdraw extends React.Component {
 
     static propTypes = {
@@ -65,63 +60,19 @@ class AccountDepositWithdraw extends React.Component {
     componentWillMount() {
         accountUtils.getFinalFeeAsset(this.props.account, "transfer");
 
-        fetch("https://blocktrades.us/api/v2/coins").then(reply => reply.json().then(result => {
+        fetchCoins("https://blocktrades.us/api/v2/coins").then(result => {
             this.setState({
-                blockTradesCoins: result
+                blockTradesCoins: result,
+                blockTradesBackedCoins: getBackedCoins({allCoins: result, backer: "TRADE"})
             });
-            this.setState({
-                blockTradesBackedCoins: this.getBlocktradesBackedCoins(result)
-            });
-        })).catch(err => {
-            console.log("error fetching blocktrades list of coins", err);
         });
 
-        fetch("https://blocktrades.us/ol/api/v2/coins").then(reply => reply.json().then(result => {
+        fetchCoins().then(result => {
             this.setState({
-                openLedgerCoins: result
+                openLedgerCoins: result,
+                openLedgerBackedCoins: getBackedCoins({allCoins: result, backer: "OPEN"})
             });
-            this.setState({
-                openLedgerBackedCoins: this.getOpenledgerBackedCoins(result)
-            });
-        })).catch(err => {
-            console.log("error fetching openledger list of coins", err);
         });
-    }
-
-    getBlocktradesBackedCoins(allBlocktradesCoins) {
-        let coins_by_type = {};
-        allBlocktradesCoins.forEach(coin_type => coins_by_type[coin_type.coinType] = coin_type);
-        let blocktradesBackedCoins = [];
-        allBlocktradesCoins.forEach(coin_type => {
-            if (coin_type.walletSymbol.startsWith('TRADE.') && coin_type.backingCoinType)
-            {
-                blocktradesBackedCoins.push({
-                    name: coins_by_type[coin_type.backingCoinType].name,
-                    walletType: coins_by_type[coin_type.backingCoinType].walletType,
-                    backingCoinType: coins_by_type[coin_type.backingCoinType].walletSymbol,
-                    symbol: coin_type.walletSymbol,
-					supportsMemos: coins_by_type[coin_type.backingCoinType].supportsOutputMemos
-                });
-            }});
-        return blocktradesBackedCoins;
-    }
-
-	getOpenledgerBackedCoins(allOpenledgerCoins) {
-        let coins_by_type = {};
-        allOpenledgerCoins.forEach(coin_type => coins_by_type[coin_type.coinType] = coin_type);
-        let openledgerBackedCoins = [];
-        allOpenledgerCoins.forEach(coin_type => {
-            if (coin_type.walletSymbol.startsWith('OPEN.') && coin_type.backingCoinType)
-            {
-                openledgerBackedCoins.push({
-                    name: coins_by_type[coin_type.backingCoinType].name,
-                    walletType: coins_by_type[coin_type.backingCoinType].walletType,
-                    backingCoinType: coins_by_type[coin_type.backingCoinType].walletSymbol,
-                    symbol: coin_type.walletSymbol,
-					supportsMemos: coins_by_type[coin_type.backingCoinType].supportsOutputMemos
-                });
-            }});
-        return openledgerBackedCoins;
     }
 
     toggleOLService(service) {
@@ -171,7 +122,7 @@ class AccountDepositWithdraw extends React.Component {
             services, activeService} = this.state;
 
         let blockTradesGatewayCoins = this.state.blockTradesBackedCoins.filter(coin => {
-            if (coin.backingCoinType === "muse") {    // it is not filterring, should be MUSE
+            if (coin.backingCoinType === "muse") {
                 return false;
             }
             return coin.symbol.toUpperCase().indexOf("TRADE") !== -1;
@@ -180,23 +131,23 @@ class AccountDepositWithdraw extends React.Component {
             return coin;
         })
         .sort((a, b) => {
-			if (a.symbol < b.symbol)
-				return -1
-			if (a.symbol > b.symbol)
-				return 1
-			return 0
-		});
+            if (a.symbol < b.symbol)
+                return -1
+            if (a.symbol > b.symbol)
+                return 1
+            return 0
+        });
 
         let openLedgerGatewayCoins = this.state.openLedgerBackedCoins.map(coin => {
             return coin;
         })
         .sort((a, b) => {
-			if (a.symbol < b.symbol)
-				return -1
-			if (a.symbol > b.symbol)
-				return 1
-			return 0
-		});
+            if (a.symbol < b.symbol)
+                return -1
+            if (a.symbol > b.symbol)
+                return 1
+            return 0
+        });
 
         let options = services.map(name => {
             return <option key={name} value={name}>{name}</option>;
@@ -204,7 +155,7 @@ class AccountDepositWithdraw extends React.Component {
 
 
         return (
-		<div className={this.props.contained ? "grid-content" : "grid-container"}>
+        <div className={this.props.contained ? "grid-content" : "grid-container"}>
             <div className={this.props.contained ? "" : "grid-content"}>
                 <div style={{borderBottom: "2px solid #444"}}>
                     <HelpContent path="components/DepositWithdraw" section="receive" account={account.get("name")}/>
@@ -217,7 +168,7 @@ class AccountDepositWithdraw extends React.Component {
                     {options}
                 </select>
 
-    			<div className="grid-content no-padding" style={{paddingTop: 15}}>
+                <div className="grid-content no-padding" style={{paddingTop: 15}}>
 
                 {activeService === services.indexOf("BlockTrades (TRADE.X)") ?
                 <div>
@@ -239,6 +190,9 @@ class AccountDepositWithdraw extends React.Component {
                                 initial_withdraw_input_coin_type="bts"
                                 initial_withdraw_output_coin_type="btc"
                                 initial_withdraw_estimated_input_amount="100000"
+                                initial_conversion_input_coin_type="bts"
+                                initial_conversion_output_coin_type="bitbtc"
+                                initial_conversion_estimated_input_amount="1000"
                             /> : null}
                             {btService === "gateway" && blockTradesGatewayCoins.length ?
                             <BlockTradesGateway
@@ -316,25 +270,26 @@ class AccountDepositWithdraw extends React.Component {
 
                 </div>
             </div>
-		</div>
+        </div>
     );
     }
 };
+AccountDepositWithdraw = BindToChainState(AccountDepositWithdraw);
 
-@connectToStores
-export default class DepositStoreWrapper extends React.Component {
-    static getStores() {
-        return [AccountStore, SettingsStore]
-    };
+class DepositStoreWrapper extends React.Component {
+    render () {
+        return <AccountDepositWithdraw {...this.props}/>;
+    }
+}
 
-    static getPropsFromStores() {
+export default connect(DepositStoreWrapper, {
+    listenTo() {
+        return [AccountStore, SettingsStore];
+    },
+    getProps() {
         return {
             account: AccountStore.getState().currentAccount,
             viewSettings: SettingsStore.getState().viewSettings
-        }
-    };
-
-    render () {
-        return <AccountDepositWithdraw {...this.props}/>
+        };
     }
-}
+});

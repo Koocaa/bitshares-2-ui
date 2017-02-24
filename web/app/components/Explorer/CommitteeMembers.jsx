@@ -1,17 +1,15 @@
 import React from "react";
-import {PropTypes} from "react-router";
 import Immutable from "immutable";
 import AccountImage from "../Account/AccountImage";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
-import {ChainStore} from "graphenejs-lib";
+import {ChainStore} from "bitsharesjs/es";
 import FormattedAsset from "../Utility/FormattedAsset";
 import Translate from "react-translate-component";
-import connectToStores from "alt/utils/connectToStores";
+import { connect } from "alt-react";
 import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
 
-@BindToChainState({keep_updating: true})
 class CommitteeMemberCard extends React.Component {
 
     static propTypes = {
@@ -19,16 +17,16 @@ class CommitteeMemberCard extends React.Component {
     };
 
     static contextTypes = {
-        history: PropTypes.history
-    };
+        router: React.PropTypes.object.isRequired
+    }
 
     _onCardClick(e) {
         e.preventDefault();
-        this.context.history.push(`/account/${this.props.committee_member.get("name")}`);
+        this.context.router.push(`/account/${this.props.committee_member.get("name")}`);
     }
 
     render() {
-        let committee_member_data = ChainStore.getCommitteeMemberById( this.props.committee_member.get("id") )
+        let committee_member_data = ChainStore.getCommitteeMemberById( this.props.committee_member.get("id") );
 
         if (!committee_member_data) {
             return null;
@@ -51,8 +49,8 @@ class CommitteeMemberCard extends React.Component {
         );
     }
 }
+CommitteeMemberCard = BindToChainState(CommitteeMemberCard, {keep_updating: true});
 
-@BindToChainState({keep_updating: true})
 class CommitteeMemberRow extends React.Component {
 
     static propTypes = {
@@ -60,12 +58,12 @@ class CommitteeMemberRow extends React.Component {
     };
 
     static contextTypes = {
-        history: PropTypes.history
-    };
+        router: React.PropTypes.object.isRequired
+    }
 
     _onRowClick(e) {
         e.preventDefault();
-        this.context.history.push(`/account/${this.props.committee_member.get("name")}`);
+        this.context.router.push(`/account/${this.props.committee_member.get("name")}`);
     }
 
     render() {
@@ -88,8 +86,8 @@ class CommitteeMemberRow extends React.Component {
         )
     }
 }
+CommitteeMemberRow = BindToChainState(CommitteeMemberRow, {keep_updating: true});
 
-@BindToChainState({keep_updating: true, show_loader: true})
 class CommitteeMemberList extends React.Component {
     static propTypes = {
         committee_members: ChainTypes.ChainObjectsList.isRequired
@@ -206,15 +204,15 @@ class CommitteeMemberList extends React.Component {
         }
         else {
             return (
-                <div className="grid-block small-up-1 medium-up-2 large-up-3">
+                <div className="grid-block no-margin small-up-1 medium-up-2 large-up-3">
                     {itemRows}
                 </div>
             );
         }
     }
 }
+CommitteeMemberList = BindToChainState(CommitteeMemberList, {keep_updating: true, show_loader: true});
 
-@BindToChainState({keep_updating: true})
 class CommitteeMembers extends React.Component {
 
     static propTypes = {
@@ -273,8 +271,8 @@ class CommitteeMembers extends React.Component {
 
         return (
             <div className="grid-block">
-                <div className="grid-block page-layout">
-                    <div className="grid-block small-5 medium-3">
+                <div className="grid-block page-layout vertical medium-horizontal">
+                    <div className="grid-block shrink">
                         <div className="grid-content">
                             <h5><Translate content="explorer.committee_members.active" />: {Object.keys(globalObject.active_committee_members).length}</h5>
                             <br/>
@@ -285,39 +283,42 @@ class CommitteeMembers extends React.Component {
 
                     </div>
                     <div className="grid-block vertical">
-                            <div className="grid-block vertical small-12 medium-6">
+                            <div className="grid-block vertical shrink">
                                 <Translate component="h3" content="markets.filter" />
                                 <input type="text" value={this.state.filterCommitteeMember} onChange={this._onFilter.bind(this)} />
                             </div>
-                            <CommitteeMemberList
-                                committee_members={Immutable.List(globalObject.active_committee_members)}
-                                membersList={globalObject.active_committee_members}
-                                filter={this.state.filterCommitteeMember}
-                                cardView={this.state.cardView}
-                            />
+                            <div className="grid-content">
+                                <CommitteeMemberList
+                                    committee_members={Immutable.List(globalObject.active_committee_members)}
+                                    membersList={globalObject.active_committee_members}
+                                    filter={this.state.filterCommitteeMember}
+                                    cardView={this.state.cardView}
+                                />
+                            </div>
                         </div>
                 </div>
             </div>
         );
     }
 }
+CommitteeMembers = BindToChainState(CommitteeMembers, {keep_updating: true});
 
-@connectToStores
 class CommitteeMembersStoreWrapper extends React.Component {
-    static getStores() {
-        return [SettingsStore]
+    render () {
+        return <CommitteeMembers {...this.props}/>;
     }
+}
 
-    static getPropsFromStores() {
+CommitteeMembersStoreWrapper = connect(CommitteeMembersStoreWrapper, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
         return {
             cardView: SettingsStore.getState().viewSettings.get("cardViewCommittee"),
             filterCommitteeMember: SettingsStore.getState().viewSettings.get("filterCommitteeMember"),
-        }
+        };
     }
-
-    render () {
-        return <CommitteeMembers {...this.props}/>
-    }
-}
+});
 
 export default CommitteeMembersStoreWrapper;

@@ -46,7 +46,6 @@ class TransactionList extends React.Component {
 }
 
 
-@BindToChainState({keep_updating: true})
 class Block extends BaseComponent {
     static propTypes = {
         dynGlobalObject: ChainTypes.ChainObject.isRequired,
@@ -91,13 +90,13 @@ class Block extends BaseComponent {
     _nextBlock() {
         let height = this.props.params.height;
         let nextBlock = Math.min(this.props.dynGlobalObject.get("head_block_number"), parseInt(height, 10) + 1);
-        this.props.history.push(`/block/${nextBlock}`);
+        this.props.router.push(`/block/${nextBlock}`);
     }
 
     _previousBlock() {
         let height = this.props.params.height;
         let previousBlock = Math.max(1, parseInt(height, 10) - 1);
-        this.props.history.push(`/block/${previousBlock}`);
+        this.props.router.push(`/block/${previousBlock}`);
     }
 
     componentDidMount() {
@@ -139,4 +138,4 @@ class Block extends BaseComponent {
     }
 }
 
-export default Block;
+export default BindToChainState(Block, {keep_updating: true});

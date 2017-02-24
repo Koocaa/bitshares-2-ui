@@ -1,9 +1,8 @@
-import React, {Component} from 'react'
-import ReactDOM from "react-dom";
-import {Apis} from "graphenejs-ws";
-import ApplicationApi from "rpc_api/ApplicationApi"
-import WalletApi from "rpc_api/WalletApi"
-import DebugApi from "rpc_api/DebugApi"
+import React, {Component} from "react";
+import {Apis} from "bitsharesjs-ws";
+import ApplicationApi from "api/ApplicationApi";
+import WalletApi from "api/WalletApi";
+import DebugApi from "api/DebugApi";
 
 function evalInContext(js) {
 
@@ -61,9 +60,9 @@ export default class Console extends Component {
     }
 
     componentDidUpdate() {
-        ReactDOM.findDOMNode(this.refs.console_input).focus()
-        var node = ReactDOM.findDOMNode(this.refs.console_div)
-        node.scrollTop = node.scrollHeight
+        this.refs.console_input.focus();
+        var node = this.refs.console_div;
+        node.scrollTop = node.scrollHeight;
     }
 
     clear() {
@@ -195,4 +194,3 @@ export default class Console extends Component {
         this.forceUpdate()
     }
 }
-
