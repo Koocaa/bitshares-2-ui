@@ -66,7 +66,6 @@ class ButtonConversion extends React.Component {
                     throw Error("unexpected reply from initiate-trade");
 				}
                 if (input_coin_type == json.inputCoinType && output_coin_type == json.outputCoinType && !isNaN(this.props.amount)) {
-
                     this.setState({conversion_memo: json.inputMemo});
                     this.setState({error: null});
                     let precision = utils.get_asset_precision(this.props.asset.get("precision"));
@@ -88,7 +87,6 @@ class ButtonConversion extends React.Component {
                         console.log( "error: ", e, msg);
                         this.setState({error: msg})
                     } );
-
 				}
             }, error => {
                 this.setState({conversion_memo: null});
@@ -520,6 +518,7 @@ class BlockTradesBridgeDepositRequest extends React.Component {
 		});
 	}
 
+
     // functions for periodically updating our deposit limit and estimates
     updateEstimates()
     {
@@ -792,6 +791,9 @@ class BlockTradesBridgeDepositRequest extends React.Component {
                     if (user_message.startsWith(expected_prefix))
                         user_message = user_message.substr(expected_prefix.length);
 
+                    if (isNaN(input_amount) || (input_amount.indexOf(' ') >= 0) || (input_amount.indexOf('-') >= 0))
+                        user_message = "Please enter a valid amount of " + input_coin_type.toUpperCase();
+
                     this.setState({[deposit_withdraw_or_convert + "_error"]: user_message});
                 }
             }
@@ -844,7 +846,6 @@ class BlockTradesBridgeDepositRequest extends React.Component {
             if (reply.inputCoinType != input_coin_type ||
                 reply.outputCoinType != output_coin_type ||
                 reply.outputAmount != output_amount) {
-
                     if (deposit_withdraw_or_convert == 'deposit') {
                         this.setState({failed_calculate_deposit: 'Failed to calculate'});
                     }
@@ -984,7 +985,6 @@ class BlockTradesBridgeDepositRequest extends React.Component {
         if (deposit_withdraw_or_convert == "deposit")
             new_input_address_and_memo = this.getCachedOrGeneratedInputAddress(this.state[deposit_withdraw_or_convert + "_input_coin_type"], new_output_coin_type);
         let new_deposit_limit = this.getCachedOrFreshDepositLimit(deposit_withdraw_or_convert, this.state[deposit_withdraw_or_convert + "_input_coin_type"], new_output_coin_type);
-
         if (!this.state[deposit_withdraw_or_convert + "_estimated_input_amount"]) {
             estimated_input_output_amount = this.getAndUpdateInputEstimate(deposit_withdraw_or_convert, this.state[deposit_withdraw_or_convert + "_input_coin_type"], new_output_coin_type, this.state[deposit_withdraw_or_convert + "_estimated_output_amount"]);
             estimated_input_output_amount_state = "_estimated_input_amount";

@@ -250,10 +250,12 @@ class AccountDepositWithdraw extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
+                            {/*
                             <TranswiserDepositWithdraw
                                 issuerAccount="transwiser-wallet"
                                 account={account.get('name')}
                                 receiveAsset="TCNY" />
+                            */}
                             <TranswiserDepositWithdraw
                                 issuerAccount="transwiser-wallet"
                                 account={account.get('name')}
