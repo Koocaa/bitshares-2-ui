@@ -13,6 +13,7 @@ class IntlActions {
         if (locale === "en") {
             return {locale};
         }
+
         if (__ELECTRON__) {
             return {
                 locale: locale,
@@ -20,7 +21,7 @@ class IntlActions {
             };
         } else {
             return (dispatch) => {
-                fetch("/locale-" + locale + ".json").then( (reply) => {
+                fetch(__CDN__ + "locale-" + locale + ".json?v=" + APP_VERSION).then( (reply) => {
                     return reply.json().then(result => {
                         dispatch({
                             locale,
