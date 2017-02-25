@@ -60,7 +60,8 @@ module.exports = function(env) {
             __BASE_URL__: JSON.stringify("baseUrl" in env ? env.baseUrl : "/"),
             __UI_API__: JSON.stringify(env.apiUrl || "https://ui.bitshares.eu/api"),
             __CDN__: JSON.stringify(env.cdn || "")
-        })
+        }),
+        new webpack.DefinePlugin({GA_TRACKING_CODE: JSON.stringify('UA-56053564-7')})
     ];
 
     if (env.prod) {
