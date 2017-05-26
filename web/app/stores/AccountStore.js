@@ -2,6 +2,7 @@ import BaseStore from "./BaseStore";
 import Immutable from "immutable";
 import alt from "alt-instance";
 import AccountActions from "actions/AccountActions";
+import SettingsActions from "actions/SettingsActions";
 import iDB from "idb-instance";
 import PrivateKeyStore from "./PrivateKeyStore";
 import {ChainStore, ChainValidation, FetchChain} from "bitsharesjs/es";
@@ -29,9 +30,13 @@ class AccountStore extends BaseStore {
             onLinkAccount: AccountActions.linkAccount,
             onUnlinkAccount: AccountActions.unlinkAccount,
             onAccountSearch: AccountActions.accountSearch,
+            tryToSetCurrentAccount: AccountActions.tryToSetCurrentAccount,
+            onSetPasswordAccount: AccountActions.setPasswordAccount,
+            onChangeSetting: SettingsActions.changeSetting,
             // onNewPrivateKeys: [ PrivateKeyActions.loadDbData, PrivateKeyActions.addKey ]
             onFetchReferalStats: AccountActions.fetchReferralStats
         });
+
         this._export(
             "loadDbData",
             "tryToSetCurrentAccount",
@@ -48,6 +53,26 @@ class AccountStore extends BaseStore {
     _getInitialState() {
         this.account_refs = null;
         this.initial_account_refs_load = true; // true until all undefined accounts are found
+        let referralAccount = "";
+        if (window) {
+            function getQueryParam(param) {
+                var result =  window.location.search.match(
+                    new RegExp("(\\?|&)" + param + "(\\[\\])?=([^&]*)")
+                );
+
+                return result ? result[3] : false;
+            }
+            let validQueries = ["r", "ref", "referrer", "referral"];
+            for (let i = 0; i < validQueries.length; i++) {
+                referralAccount = getQueryParam(validQueries[i]);
+                if (referralAccount) break;
+            }
+        }
+        if (referralAccount) {
+            accountStorage.set("referralAccount", referralAccount); // Reset to empty string when the user returns with no ref code
+        } else {
+            accountStorage.remove("referralAccount");
+        }
 
         return {
             update: false,
@@ -55,6 +80,8 @@ class AccountStore extends BaseStore {
             accountsLoaded: false,
             refsLoaded: false,
             currentAccount: null,
+            referralAccount: accountStorage.get("referralAccount", ""),
+            passwordAccount: accountStorage.get(this._getCurrentAccountKey("passwordAccount"), ""),
             linkedAccounts: Immutable.Set(),
             myIgnoredAccounts: Immutable.Set(),
             unFollowedAccounts: Immutable.Set(accountStorage.get("unfollowed_accounts", [])),
@@ -62,6 +89,18 @@ class AccountStore extends BaseStore {
             searchTerm: "",
             referral_stats: null
         };
+    }
+
+    onSetPasswordAccount(account) {
+        let key = this._getCurrentAccountKey("passwordAccount");
+        if (!account) {
+            accountStorage.remove(key);
+        } else {
+            accountStorage.set(key, account);
+        }
+        this.setState({
+            passwordAccount: account
+        });
     }
 
     _addIgnoredAccount(name) {
@@ -73,6 +112,7 @@ class AccountStore extends BaseStore {
     loadDbData() {
         let linkedAccounts = Immutable.Set().asMutable();
         let chainId = Apis.instance().chain_id;
+
         return new Promise((resolve, reject) => {
             iDB.load_data("linked_accounts")
             .then(data => {
@@ -94,13 +134,14 @@ class AccountStore extends BaseStore {
                 });
                 Promise.all(accountPromises).then(() => {
                     ChainStore.subscribe(this.chainStoreUpdate.bind(this));
-
+                    this.chainStoreUpdate();
                     this.setState({
                         subbed: true
                     });
                     resolve();
                 }).catch(err => {
                     ChainStore.subscribe(this.chainStoreUpdate.bind(this));
+                    this.chainStoreUpdate();
                     this.setState({
                         subbed: true
                     });
@@ -114,9 +155,6 @@ class AccountStore extends BaseStore {
     }
 
     chainStoreUpdate() {
-        if(this.state.update) {
-            this.setState({update: false});
-        }
         this.addAccountRefs();
     }
 
@@ -125,7 +163,7 @@ class AccountStore extends BaseStore {
         let account_refs = AccountRefsStore.getState().account_refs;
         if( ! this.initial_account_refs_load && this.account_refs === account_refs) {
             return this.setState({refsLoaded: true});
-        };
+        }
         this.account_refs = account_refs;
         let pending = false;
         this.state.linkedAccounts = this.state.linkedAccounts.withMutations(linkedAccounts => {
@@ -154,12 +192,10 @@ class AccountStore extends BaseStore {
         }
 
         let accounts = [];
-        let needsUpdate = false;
         for(let account_name of this.state.linkedAccounts) {
             let account = ChainStore.getAccount(account_name);
             if(account === undefined) {
                 // console.log(account_name, "account undefined");
-                needsUpdate = true;
                 continue;
             }
             if(account == null) {
@@ -170,19 +206,17 @@ class AccountStore extends BaseStore {
 
             if(auth === undefined) {
                 // console.log(account_name, "auth undefined");
-                needsUpdate = true;
                 continue;
             }
 
-            if(auth === "full") {
+            if(auth === "full" || auth === "partial") {
                 accounts.push(account_name);
             }
 
             // console.log("account:", account_name, "auth:", auth);
-
         }
-        if (needsUpdate) this.state.update = true;
-        // console.log("accounts:", accounts, "linkedAccounts:", this.state.linkedAccounts);
+        if (this.state.passwordAccount && accounts.indexOf(this.state.passwordAccount) === -1) accounts.push(this.state.passwordAccount);
+        // console.log("accounts:", accounts, "linkedAccounts:", this.state.linkedAccounts && this.state.linkedAccounts.toJS());
         return accounts.sort();
     }
 
@@ -266,14 +300,19 @@ class AccountStore extends BaseStore {
         });
     }
 
-    _getCurrentAccountKey() {
+    _getCurrentAccountKey(key = "currentAccount") {
         const chainId = Apis.instance().chain_id;
-        return "currentAccount" + (chainId ? `_${chainId.substr(0, 8)}` : "");
+        return key + (chainId ? `_${chainId.substr(0, 8)}` : "");
     }
 
     tryToSetCurrentAccount() {
+        const passwordAccountKey = this._getCurrentAccountKey("passwordAccount");
         const key = this._getCurrentAccountKey();
-        if (accountStorage.has(key)) {
+        if (accountStorage.has(passwordAccountKey)) {
+            const acc = accountStorage.get(passwordAccountKey, null);
+            this.setState({passwordAccount: acc});
+            return this.setCurrentAccount(acc);
+        } else if (accountStorage.has(key)) {
             return this.setCurrentAccount(accountStorage.get(key, null));
         }
 
@@ -287,6 +326,7 @@ class AccountStore extends BaseStore {
     }
 
     setCurrentAccount(name) {
+        if (this.state.passwordAccount) name = this.state.passwordAccount;
         const key = this._getCurrentAccountKey();
         if (!name) {
             this.state.currentAccount = null;
@@ -399,6 +439,13 @@ class AccountStore extends BaseStore {
 
     isMyKey(key) {
         return PrivateKeyStore.hasKey(key);
+    }
+
+    onChangeSetting(payload) {
+        if (payload.setting === "passwordLogin" && payload.value === false) {
+            this.onSetPasswordAccount(null);
+            accountStorage.remove(this._getCurrentAccountKey());
+        }
     }
 }
 

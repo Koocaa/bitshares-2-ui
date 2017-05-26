@@ -38,7 +38,12 @@ class Comment extends React.Component {
 
     render() {
         let {comment, date, user, color} = this.props;
-        let systemUsers = [counterpart.translate("chat.welcome_user"), "SYSTEM"];
+        let systemUsers = ["chat.welcome_user", "SYSTEM"];
+
+        if (comment === "chat.telegram_link") {
+            comment = <Translate content={comment} unsafe />;
+        }
+
         return (
             <div style={{padding: "3px 1px"}}>
                 {date ?
@@ -53,7 +58,7 @@ class Comment extends React.Component {
                             fontWeight: "bold",
                             color: color
                         }}>
-                            {user}:&nbsp;
+                            {user === "chat.welcome_user" ? counterpart.translate(user) : user}:&nbsp;
                     </span>
                     <span className="chat-text">
                         {systemUsers.indexOf(user) !== -1 ? comment : comment.substr(0, 140)}
@@ -69,16 +74,32 @@ class Chat extends React.Component {
         super(props);
 
         let anonName = "anonymous" + Math.round(10000 * Math.random());
+        let myAccounts = this.props.linkedAccounts
+        .filter(a => {
+            let account = ChainStore.getAccount(a);
+            if (!account) {
+                return false;
+            }
+            return AccountStore.isMyAccount(account);
+        })
+        .map(account => {
+            return account;
+        });
+
         this.state = {
             messages: [{
-                user: counterpart.translate("chat.welcome_user"),
+                user: "chat.welcome_user",
                 message: counterpart.translate("chat.welcome"),
+                color: "black"
+            },{
+                user: "SYSTEM",
+                message: "chat.telegram_link",
                 color: "black"
             }],
             connected: false,
             showChat: props.viewSettings.get("showChat", true),
             myColor: props.viewSettings.get("chatColor", "#904E4E"),
-            userName: props.viewSettings.get("chatUsername", anonName),
+            userName: props.viewSettings.get("chatUsername", myAccounts.size ? myAccounts.first() : anonName),
             shouldScroll: true,
             loading: true,
             anonName: anonName,
@@ -225,7 +246,9 @@ class Chat extends React.Component {
             data.history.filter(a => {
                 return (
                     a.user !== "Welcome to BitShares" &&
-                    a.user !== "Welcome to Openledger"
+                    a.user !== "Welcome to Openledger" &&
+                    a.user !== "Bitshares'e Hoşgeldiniz" &&
+                    a.user !== "chat.welcome_user"
                 );
             }).forEach(msg => {
                 this.state.messages.push(msg);
@@ -603,7 +626,6 @@ class Chat extends React.Component {
                 </div>
             </div>
         );
-
         return (
             <div
                 id="chatbox"
@@ -622,7 +644,7 @@ class Chat extends React.Component {
                     <div className={"grid-block main-content vertical " + (docked ? "docked" : "flyout")} >
                         <div className="chatbox-title grid-block shrink">
                             <Translate content="chat.title" />
-                            <span>&nbsp;- <Translate content="chat.users" count={this.connections.size + 1} /></span>
+                            <span>&nbsp;- <Translate content="chat.users" userCount={this.connections.size + 1} /></span>
                             <div className="chatbox-pin" onClick={this._onToggleDock.bind(this)}>
                                 {docked ? <Icon className="icon-14px rotate" name="thumb-tack"/> : <Icon className="icon-14px" name="thumb-tack"/>}
                             </div>
@@ -664,7 +686,15 @@ class Chat extends React.Component {
     }
 }
 
-export default connect(Chat, {
+class SettingsContainer extends React.Component {
+
+    render() {
+        if (!this.props.accountsReady) return null;
+        return <Chat {...this.props} />;
+    }
+}
+
+export default connect(SettingsContainer, {
     listenTo() {
         return [AccountStore, SettingsStore];
     },
@@ -672,7 +702,8 @@ export default connect(Chat, {
         return {
             currentAccount: AccountStore.getState().currentAccount,
             linkedAccounts: AccountStore.getState().linkedAccounts,
-            viewSettings: SettingsStore.getState().viewSettings
+            viewSettings: SettingsStore.getState().viewSettings,
+            accountsReady: AccountStore.getState().accountsLoaded && AccountStore.getState().refsLoaded
         };
     }
 });

@@ -17,24 +17,61 @@ class Settings extends React.Component {
     constructor(props) {
         super();
 
+        let menuEntries = this._getMenuEntries(props);
+        let activeSetting = props.viewSettings.get("activeSetting", 0);
+        if (activeSetting > (menuEntries.length - 1)) {
+            activeSetting = 0;
+        }
+
         this.state = {
             apiServer: props.settings.get("apiServer"),
-            activeSetting: props.viewSettings.get("activeSetting", 0),
-            menuEntries: [
-                "general",
-                "wallet",
-                "accounts",
-                "password",
-                "backup",
-                "restore",
-                "access"
-            ],
+            activeSetting,
+            menuEntries,
             settingEntries: {
                 general: ["locale", "unit", "showSettles", "walletLockTimeout", "themes",
-                "disableChat", "showAssetPercent", "reset"],
+                "disableChat", "showAssetPercent", "passwordLogin", "reset"],
                 access: ["apiServer", "faucet_address"]
             }
         };
+    }
+
+    componentWillReceiveProps(np) {
+        if (np.settings.get("passwordLogin") !== this.props.settings.get("passwordLogin")) {
+            const currentEntries = this._getMenuEntries(this.props);
+            const menuEntries = this._getMenuEntries(np);
+            if (currentEntries.length < menuEntries.length) {
+                this.setState({
+                    activeSetting: this.state.activeSetting + (menuEntries.length - currentEntries.length)
+                });
+            }
+            this.setState({
+                menuEntries
+            });
+
+            if (this.state.activeSetting > (menuEntries.length - 1)) {
+                this.setState({
+                    activeSetting: 0
+                });
+            }
+        }
+    }
+
+    _getMenuEntries(props) {
+        let menuEntries = [
+            "general",
+            "wallet",
+            "accounts",
+            "password",
+            "backup",
+            "restore",
+            "access"
+        ];
+
+        if (props.settings.get("passwordLogin")) {
+            menuEntries.splice(4, 1);
+            menuEntries.splice(1, 1);
+        }
+        return menuEntries;
     }
 
     triggerModal(e) {
@@ -78,8 +115,9 @@ class Settings extends React.Component {
 
         case "walletLockTimeout":
             let newValue = parseInt(e.target.value, 10);
-            if (newValue && !isNaN(newValue) && typeof newValue === "number") {
-                SettingsActions.changeSetting({setting: "walletLockTimeout", value: e.target.value });
+            if (isNaN(newValue)) newValue = 0;
+            if (!isNaN(newValue) && typeof newValue === "number") {
+                SettingsActions.changeSetting({setting: "walletLockTimeout", value: newValue });
             }
             break;
 
@@ -96,15 +134,10 @@ class Settings extends React.Component {
             break;
 
         case "disableChat":
-            SettingsActions.changeSetting({setting: "disableChat", value: e.target.value === "yes" });
-            break;
-
         case "showSettles":
-            SettingsActions.changeSetting({setting: "showSettles", value: e.target.value === "yes" });
-            break;
-
         case "showAssetPercent":
-            SettingsActions.changeSetting({setting: "showAssetPercent", value: e.target.value === "yes" });
+        case "passwordLogin":
+            SettingsActions.changeSetting({setting, value: e.target.value === "yes" });
             break;
 
         case "unit":
@@ -138,10 +171,10 @@ class Settings extends React.Component {
 
     render() {
         let {settings, defaults} = this.props;
-        let {menuEntries, activeSetting, settingEntries} = this.state;
+        const {menuEntries, activeSetting, settingEntries} = this.state;
 
         let entries;
-        let activeEntry = menuEntries[activeSetting];
+        let activeEntry = menuEntries[activeSetting] || menuEntries[0];
         switch (activeEntry) {
 
         case "accounts":
@@ -161,7 +194,7 @@ class Settings extends React.Component {
             break;
 
         case "restore":
-            entries = <RestoreSettings />;
+            entries = <RestoreSettings passwordLogin={this.props.settings.get("passwordLogin")} />;
             break;
 
         default:
@@ -176,6 +209,7 @@ class Settings extends React.Component {
                         locales={this.props.localesObject}
                         triggerModal={this.triggerModal.bind(this)}
                         {...this.state}
+                        apiLatencies={this.props.apiLatencies}
                     />);
             });
             break;
@@ -195,9 +229,9 @@ class Settings extends React.Component {
                     </div>
 
                     <div className="grid-content" style={{paddingLeft: "1rem", paddingRight: "1rem", maxWidth: 1000}}>
-                        <div className="grid-block small-10 no-margin vertical">
+                        <div className="grid-block small-12 medium-10 no-margin vertical">
                             <Translate component="h3" content={"settings." + menuEntries[activeSetting]} />
-                            <Translate style={{paddingTop: 10, paddingBottom: 20, marginBottom: 30}} className="bottom-border" content={`settings.${menuEntries[activeSetting]}_text`} />
+                            <Translate unsafe style={{paddingTop: 10, paddingBottom: 20, marginBottom: 30}} className="bottom-border" content={`settings.${menuEntries[activeSetting]}_text`} />
                             {entries}
                         </div>
                     </div>
@@ -205,7 +239,7 @@ class Settings extends React.Component {
                 <WebsocketAddModal
                     ref="ws_modal"
                     apis={defaults["apiServer"]}
-                    api={defaults["apiServer"].filter(a => {return a === this.state.apiServer;})}
+                    api={defaults["apiServer"].filter(a => {return a.url === this.state.apiServer;}).reduce((a, b) => {return b && b.url;}, null)}
                     changeConnection={(apiServer) => {this.setState({apiServer});}}
                 />
             </div>

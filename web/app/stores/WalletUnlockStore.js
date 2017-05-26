@@ -10,8 +10,11 @@ let ss = new ls(STORAGE_KEY);
 class WalletUnlockStore {
 
     constructor() {
-        this.bindActions(WalletUnlockActions)
-        this.state = {locked: true}
+        this.bindActions(WalletUnlockActions);
+        this.state = {
+            locked: true,
+            passwordLogin: ss.get("settings_v3").passwordLogin || false
+        };
 
         this.walletLockTimeout = this._getTimeout(); // seconds (10 minutes)
         this.timeout = null;
@@ -25,17 +28,15 @@ class WalletUnlockStore {
         // if (timeoutSetting) {
         //     this.walletLockTimeout = timeoutSetting;
         // }
-
     }
 
     onUnlock({resolve, reject}) {
         //DEBUG console.log('... onUnlock setState', WalletDb.isLocked())
         //
-
         this._setLockTimeout();
         if( ! WalletDb.isLocked()) {
-            resolve()
-            return
+            resolve();
+            return;
         }
 
         this.setState({resolve, reject, locked: WalletDb.isLocked()});
@@ -67,19 +68,26 @@ class WalletUnlockStore {
             this.walletLockTimeout = payload.value;
             this._clearLockTimeout();
             this._setLockTimeout();
+        } else if (payload.setting === "passwordLogin") {
+            this.setState({
+                passwordLogin: payload.value
+            });
         }
     }
 
 
     _setLockTimeout() {
         this._clearLockTimeout();
-        this.timeout = setTimeout(() => {
-            if (!WalletDb.isLocked()) {
-                console.log("auto locking after", this.walletLockTimeout, "s");
-                WalletDb.onLock()
-                this.setState({locked: true})
-            };
-        }, this.walletLockTimeout * 1000);
+        /* If the timeout is different from zero, auto unlock the wallet using a timeout */
+        if (!!this.walletLockTimeout) {
+            this.timeout = setTimeout(() => {
+                if (!WalletDb.isLocked()) {
+                    console.log("auto locking after", this.walletLockTimeout, "s");
+                    WalletDb.onLock()
+                    this.setState({locked: true})
+                };
+            }, this.walletLockTimeout * 1000);
+        }
     }
 
     _clearLockTimeout() {
@@ -91,6 +99,10 @@ class WalletUnlockStore {
 
     _getTimeout() {
         return parseInt(ss.get("lockTimeout", 600), 10);
+    }
+
+    onCheckLock() {
+        this.setState({locked: WalletDb.isLocked()});
     }
 }
 

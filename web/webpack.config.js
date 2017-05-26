@@ -59,9 +59,10 @@ module.exports = function(env) {
             __HASH_HISTORY__: !!env.hash,
             __BASE_URL__: JSON.stringify("baseUrl" in env ? env.baseUrl : "/"),
             __UI_API__: JSON.stringify(env.apiUrl || "https://ui.bitshares.eu/api"),
-            __CDN__: JSON.stringify(env.cdn || "")
+            __CDN__: JSON.stringify(env.cdn || ""),
+            GA_TRACKING_CODE: JSON.stringify('UA-56053564-7'),
+            __TESTNET__: !!env.testnet
         }),
-        new webpack.DefinePlugin({GA_TRACKING_CODE: JSON.stringify('UA-56053564-7')})
     ];
 
     if (env.prod) {
@@ -187,7 +188,7 @@ module.exports = function(env) {
                 },
                 {
                     test: /\.png$/,
-                    exclude:[path.resolve(root_dir, "app/assets/asset-symbols")],
+                    exclude:[path.resolve(root_dir, "app/assets/asset-symbols"), path.resolve(root_dir, "app/assets/language-dropdown/img")],
                     use: [
                         {
                             loader: "url-loader",

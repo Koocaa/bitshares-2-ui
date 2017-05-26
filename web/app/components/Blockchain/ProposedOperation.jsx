@@ -350,24 +350,15 @@ class ProposedOperation extends React.Component {
 
             case "asset_update_feed_producers":
                 color = "warning";
-
-                if (current === op[1].issuer) {
-                    column = (
-                        <span>
-                            {this.linkToAccount(op[1].issuer)}&nbsp;
-                            <Translate component="span" content="proposal.update_feed_producers" />
-                            &nbsp;{this.linkToAsset(op[1].asset_to_update)}
-                        </span>
-                    );
-                } else {
-                    column = (
-                        <span>
-                            {this.linkToAccount(op[1].issuer)}&nbsp;
-                            <Translate component="span" content="proposal.feed_producer" />
-                            &nbsp;{this.linkToAsset(op[1].asset_to_update)}
-                        </span>
-                    );
-                }
+                column = (
+                    <TranslateWithLinks
+                        string="proposal.feed_producer"
+                        keys={[
+                            {type: "account", value: op[1].issuer, arg: "account"},
+                            {type: "asset", value: op[1].asset_to_update, arg: "asset"}
+                        ]}
+                    />
+                );
                 break;
 
             case "asset_issue":
@@ -621,11 +612,13 @@ class ProposedOperation extends React.Component {
 
             case "vesting_balance_withdraw":
                 column = (
-                    <span>
-                        {this.linkToAccount(op[1].owner)}&nbsp;
-                        <Translate component="span" content="proposal.vesting_balance_withdraw" />
-                        &nbsp;<FormattedAsset style={{fontWeight: "bold"}} amount={op[1].amount.amount} asset={op[1].amount.asset_id} />
-                    </span>
+                    <TranslateWithLinks
+                        string={"proposal.vesting_balance_withdraw"}
+                        keys={[
+                            {type: "account", value: op[1].owner, arg: "account"},
+                            {type: "amount", value: op[1].amount, arg: "amount"}
+                        ]}
+                    />
                 );
                 break;
 

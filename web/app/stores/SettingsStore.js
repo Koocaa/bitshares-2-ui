@@ -5,6 +5,7 @@ import Immutable from "immutable";
 import {merge} from "lodash";
 import ls from "common/localStorage";
 import { Apis } from "bitsharesjs-ws";
+import { settingsAPIs } from "api/apiConfig";
 
 const CORE_ASSET = "BTS"; // Setting this to BTS to prevent loading issues when used with BTS chain which is the most usual case currently
 
@@ -14,30 +15,40 @@ let ss = new ls(STORAGE_KEY);
 class SettingsStore {
     constructor() {
         this.exportPublicMethods({init: this.init.bind(this), getSetting: this.getSetting.bind(this)});
+
+        this.bindListeners({
+            onChangeSetting: SettingsActions.changeSetting,
+            onChangeViewSetting: SettingsActions.changeViewSetting,
+            onChangeMarketDirection: SettingsActions.changeMarketDirection,
+            onAddStarMarket: SettingsActions.addStarMarket,
+            onRemoveStarMarket: SettingsActions.removeStarMarket,
+            onAddStarAccount: SettingsActions.addStarAccount,
+            onRemoveStarAccount: SettingsActions.removeStarAccount,
+            onAddWS: SettingsActions.addWS,
+            onRemoveWS: SettingsActions.removeWS,
+            onHideAsset: SettingsActions.hideAsset,
+            onClearSettings: SettingsActions.clearSettings,
+            onSwitchLocale: IntlActions.switchLocale,
+            onSetUserMarket: SettingsActions.setUserMarket
+        });
+
         this.initDone = false;
         this.defaultSettings = Immutable.Map({
             locale: "cn",
-            apiServer: "wss://bitshares.dacplay.org/ws",
-            faucet_address: "https://bts2faucet.dacplay.org",
+            apiServer: settingsAPIs.DEFAULT_WS_NODE,
+            faucet_address: settingsAPIs.DEFAULT_FAUCET,
             unit: CORE_ASSET,
             showSettles: false,
             showAssetPercent: false,
             walletLockTimeout: 60 * 10,
             themes: "darkTheme",
-            disableChat: false
+            disableChat: false,
+            passwordLogin: false
         });
 
         // If you want a default value to be translated, add the translation to settings in locale-xx.js
         // and use an object {translate: key} in the defaults array
-        let apiServer = [
-            {url: "wss://bitshares.openledger.info/ws", location: "Nuremberg, Germany"},
-            {url: "wss://bit.btsabc.org/ws", location: "Hong Kong"},
-            {url: "wss://bts.transwiser.com/ws", location: "Hangzhou, China"},
-            {url: "wss://bitshares.dacplay.org:8089/ws", location:  "Hangzhou, China"},
-            {url: "wss://openledger.hk/ws", location: "Hong Kong"},
-            {url: "wss://secure.freedomledger.com/ws", location: "Toronto, Canada"},
-            {url: "wss://testnet.bitshares.eu/ws", location: "Public Testnet Server (Frankfurt, Germany)"}
-        ];
+        let apiServer = settingsAPIs.WS_NODE_LIST;
 
         let defaults = {
             locale: [
@@ -83,6 +94,10 @@ class SettingsStore {
                 "darkTheme",
                 "lightTheme",
                 "olDarkTheme"
+            ],
+            passwordLogin: [
+                {translate: "yes"},
+                {translate: "no"}
             ]
             // confirmMarketOrder: [
             //     {translate: "confirm_yes"},
@@ -90,41 +105,10 @@ class SettingsStore {
             // ]
         };
 
-        this.bindListeners({
-            onChangeSetting: SettingsActions.changeSetting,
-            onChangeViewSetting: SettingsActions.changeViewSetting,
-            onChangeMarketDirection: SettingsActions.changeMarketDirection,
-            onAddStarMarket: SettingsActions.addStarMarket,
-            onRemoveStarMarket: SettingsActions.removeStarMarket,
-            onAddStarAccount: SettingsActions.addStarAccount,
-            onRemoveStarAccount: SettingsActions.removeStarAccount,
-            onAddWS: SettingsActions.addWS,
-            onRemoveWS: SettingsActions.removeWS,
-            onHideAsset: SettingsActions.hideAsset,
-            onClearSettings: SettingsActions.clearSettings,
-            onSwitchLocale: IntlActions.switchLocale
-        });
-
         this.settings = Immutable.Map(merge(this.defaultSettings.toJS(), ss.get("settings_v3")));
 
         let savedDefaults = ss.get("defaults_v1", {});
         this.defaults = merge({}, defaults, savedDefaults);
-
-        (savedDefaults.connection || []).forEach(api => {
-            let hasApi = false;
-            if (typeof api === "string") {
-                api = {url: api, location: null};
-            }
-            apiServer.forEach(server => {
-                if (server.url === api.url) {
-                    hasApi = true;
-                }
-            });
-
-            if (!hasApi) {
-                this.defaults.apiServer.push(api);
-            }
-        });
 
         (savedDefaults.apiServer || []).forEach(api => {
             let hasApi = false;
@@ -142,15 +126,17 @@ class SettingsStore {
             }
         });
 
-        for (let i = apiServer.length - 1; i >= 0; i--) {
-            let hasApi = false;
-            this.defaults.apiServer.forEach(api => {
-                if (api.url === apiServer[i].url) {
-                    hasApi = true;
+        if (!savedDefaults || (savedDefaults && (!savedDefaults.apiServer || !savedDefaults.apiServer.length))) {
+            for (let i = apiServer.length - 1; i >= 0; i--) {
+                let hasApi = false;
+                this.defaults.apiServer.forEach(api => {
+                    if (api.url === apiServer[i].url) {
+                        hasApi = true;
+                    }
+                });
+                if (!hasApi) {
+                    this.defaults.apiServer.unshift(apiServer[i]);
                 }
-            });
-            if (!hasApi) {
-                this.defaults.apiServer.unshift(apiServer[i]);
             }
         }
 
@@ -159,20 +145,24 @@ class SettingsStore {
         this.marketDirections = Immutable.Map(ss.get("marketDirections"));
 
         this.hiddenAssets = Immutable.List(ss.get("hiddenAssets", []));
+
+        this.apiLatencies = ss.get("apiLatencies", {});
     }
 
     init() {
         return new Promise((resolve) => {
             if (this.initDone) resolve();
-            this.marketsString = this._getChainKey("markets");
+            this.starredKey = this._getChainKey("markets");
+            this.marketsKey = this._getChainKey("userMarkets");
             // Default markets setup
             let topMarkets = {
                 markets_4018d784: [ // BTS MAIN NET
                     "OPEN.MKR", "BTS", "OPEN.ETH", "ICOO", "BTC", "OPEN.LISK", "BKT",
                     "OPEN.STEEM", "OPEN.GAME", "PEERPLAYS", "USD", "CNY", "BTSR", "OBITS",
-                    "OPEN.DGD", "EUR", "GOLD", "SILVER", "IOU.CNY",
+                    "OPEN.DGD", "EUR", "GOLD", "SILVER", "IOU.CNY", "OPEN.DASH",
                     "OPEN.USDT", "OPEN.EURT", "OPEN.BTC", "CADASTRAL", "BLOCKPAY", "BTWTY",
-                    "OPEN.INCNT", "KAPITAL"
+                    "OPEN.INCNT", "KAPITAL", "OPEN.MAID", "OPEN.SBD", "OPEN.GRC",
+                    "YOYOW", "EOS", "HERO"
                 ],
                 markets_39f5e2ed: [ // TESTNET
                     "PEG.FAKEUSD", "BTWTY"
@@ -181,7 +171,7 @@ class SettingsStore {
 
             let bases = {
                 markets_4018d784: [ // BTS MAIN NET
-                    "BTS", "OPEN.BTC", "USD", "CNY", "BTC"
+                    "USD", "OPEN.BTC", "CNY", "BTS", "BTC"
                 ],
                 markets_39f5e2ed: [ // TESTNET
                     "TEST"
@@ -189,10 +179,10 @@ class SettingsStore {
             };
 
             let coreAssets = {markets_4018d784: "BTS", markets_39f5e2ed: "TEST"};
-            let coreAsset = coreAssets[this.marketsString] || "BTS";
+            let coreAsset = coreAssets[this.starredKey] || "BTS";
             this.defaults.unit[0] = coreAsset;
 
-            let chainBases = bases[this.marketsString] || bases.markets_4018d784;
+            let chainBases = bases[this.starredKey] || bases.markets_4018d784;
             this.preferredBases = Immutable.List(chainBases);
 
             function addMarkets(target, base, markets) {
@@ -204,12 +194,14 @@ class SettingsStore {
             }
 
             let defaultMarkets = [];
-            let chainMarkets = topMarkets[this.marketsString] || [];
+            let chainMarkets = topMarkets[this.starredKey] || [];
             this.preferredBases.forEach(base => {
                 addMarkets(defaultMarkets, base, chainMarkets);
             });
 
-            this.starredMarkets = Immutable.Map(ss.get(this.marketsString, defaultMarkets));
+            this.defaultMarkets = Immutable.Map(defaultMarkets);
+            this.starredMarkets = Immutable.Map(ss.get(this.starredKey, []));
+            this.userMarkets = Immutable.Map(ss.get(this.marketsKey, {}));
             this.starredAccounts = Immutable.Map(ss.get(this._getChainKey("starredAccounts")));
 
             this.initDone = true;
@@ -263,14 +255,23 @@ class SettingsStore {
 
     onAddStarMarket(market) {
         let marketID = market.quote + "_" + market.base;
-
         if (!this.starredMarkets.has(marketID)) {
             this.starredMarkets = this.starredMarkets.set(marketID, {quote: market.quote, base: market.base});
 
-            ss.set(this.marketsString, this.starredMarkets.toJS());
+            ss.set(this.starredKey, this.starredMarkets.toJS());
         } else {
             return false;
         }
+    }
+
+    onSetUserMarket(payload) {
+        let marketID = payload.quote + "_" + payload.base;
+        if (payload.value) {
+            this.userMarkets = this.userMarkets.set(marketID, {quote: payload.quote, base: payload.base});
+        } else {
+            this.userMarkets = this.userMarkets.delete(marketID);
+        }
+        ss.set(this.marketsKey, this.userMarkets.toJS());
     }
 
     onRemoveStarMarket(market) {
@@ -278,7 +279,7 @@ class SettingsStore {
 
         this.starredMarkets = this.starredMarkets.delete(marketID);
 
-        ss.set(this.marketsString, this.starredMarkets.toJS());
+        ss.set(this.starredKey, this.starredMarkets.toJS());
     }
 
     onAddStarAccount(account) {

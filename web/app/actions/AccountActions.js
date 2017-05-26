@@ -45,6 +45,10 @@ class AccountActions {
         return name;
     }
 
+    tryToSetCurrentAccount() {
+        return true;
+    }
+
     /**
      *  TODO:  This is a function of teh wallet_api and has no business being part of AccountActions
      */
@@ -85,6 +89,29 @@ class AccountActions {
         return (dispatch) => {
             return WalletActions.createAccount(
                 account_name,
+                registrar,
+                referrer,
+                referrer_percent,
+                refcode
+            ).then( () => {
+                dispatch(account_name);
+                return account_name;
+            });
+        };
+    }
+
+    createAccountWithPassword(
+        account_name,
+        password,
+        registrar,
+        referrer,
+        referrer_percent,
+        refcode
+    ) {
+        return (dispatch) => {
+            return WalletActions.createAccountWithPassword(
+                account_name,
+                password,
                 registrar,
                 referrer,
                 referrer_percent,
@@ -141,6 +168,10 @@ class AccountActions {
         .catch(
             error => { throw error; this.dispatch() }
         );
+    }
+
+    setPasswordAccount(account) {
+        return account;
     }
 }
 

@@ -60,6 +60,9 @@ class MarketsActions {
             }
 
             if (!marketStats[market] || refresh) {
+                marketStats[market] = {
+                    lastFetched: new Date()
+                };
                 Promise.all([
                     Apis.instance().history_api().exec("get_market_history", [
                         base.get("id"), quote.get("id"), 3600, startDateShort.toISOString().slice(0, -5), endDate.toISOString().slice(0, -5)
@@ -67,10 +70,6 @@ class MarketsActions {
                     Apis.instance().history_api().exec("get_fill_order_history", [base.get("id"), quote.get("id"), 1])
                 ])
                 .then(result => {
-                    marketStats[market] = {
-                        lastFetched: new Date()
-                    };
-
                     dispatch({history: result[0], last: result[1], market: marketName, base, quote});
                 });
             }
@@ -87,7 +86,7 @@ class MarketsActions {
 
         let {isMarketAsset, marketAsset, inverted} = marketUtils.isMarketAsset(quote, base);
 
-        let bucketCount = 200;
+        const bucketCount = 200;
         // let lastLimitOrder = null;
         return (dispatch) => {
 
@@ -144,9 +143,13 @@ class MarketsActions {
                         }
 
                         let startDate = new Date();
+                        let startDate2 = new Date();
+                        let startDate3 = new Date();
                         let endDate = new Date();
                         let startDateShort = new Date();
                         startDate = new Date(startDate.getTime() - bucketSize * bucketCount * 1000);
+                        startDate2 = new Date(startDate2.getTime() - bucketSize * bucketCount * 2000);
+                        startDate3 = new Date(startDate3.getTime() - bucketSize * bucketCount * 3000);
                         endDate.setDate(endDate.getDate() + 1);
                         startDateShort = new Date(startDateShort.getTime() - 3600 * 50 * 1000);
 
@@ -166,16 +169,24 @@ class MarketsActions {
                             !hasFill ? null : Apis.instance().history_api().exec("get_fill_order_history", [base.get("id"), quote.get("id"), 200]),
                             !hasFill ? null : Apis.instance().history_api().exec("get_market_history", [
                                 base.get("id"), quote.get("id"), 3600, startDateShort.toISOString().slice(0, -5), endDate.toISOString().slice(0, -5)
+                            ]),
+                            !hasFill ? null : Apis.instance().history_api().exec("get_market_history", [
+                                base.get("id"), quote.get("id"), bucketSize, startDate2.toISOString().slice(0, -5) , startDate.toISOString().slice(0, -5)
+                            ]),
+                            !hasFill ? null : Apis.instance().history_api().exec("get_market_history", [
+                                base.get("id"), quote.get("id"), bucketSize, startDate3.toISOString().slice(0, -5) , startDate2.toISOString().slice(0, -5)
                             ])
                         ])
                         .then(results => {
+                            const data1 = results[6] || [];
+                            const data2 = results[7] || [];
                             dispatch({
                                 limits: results[0],
-                                calls: results[1],
-                                settles: results[2],
-                                price: results[3],
-                                history: results[4],
-                                recent: results[5],
+                                calls: !onlyLimitOrder && results[1],
+                                settles: !onlyLimitOrder && results[2],
+                                price: hasFill && data1.concat(data2.concat(results[3])),
+                                history: hasFill && results[4],
+                                recent: hasFill && results[5],
                                 market: subID,
                                 base: base,
                                 quote: quote,
@@ -207,9 +218,13 @@ class MarketsActions {
                 }
 
                 let startDate = new Date();
+                let startDate2 = new Date();
+                let startDate3 = new Date();
                 let endDate = new Date();
                 let startDateShort = new Date();
                 startDate = new Date(startDate.getTime() - bucketSize * bucketCount * 1000);
+                startDate2 = new Date(startDate2.getTime() - bucketSize * bucketCount * 2000);
+                startDate3 = new Date(startDate3.getTime() - bucketSize * bucketCount * 3000);
                 startDateShort = new Date(startDateShort.getTime() - 3600 * 50 * 1000);
                 endDate.setDate(endDate.getDate() + 1);
                 if (__DEV__) console.time("Fetch market data");
@@ -229,17 +244,24 @@ class MarketsActions {
                     Apis.instance().history_api().exec("get_fill_order_history", [base.get("id"), quote.get("id"), 200]),
                     Apis.instance().history_api().exec("get_market_history", [
                         base.get("id"), quote.get("id"), 3600, startDateShort.toISOString().slice(0, -5), endDate.toISOString().slice(0, -5)
+                    ]),
+                    Apis.instance().history_api().exec("get_market_history", [
+                        base.get("id"), quote.get("id"), bucketSize, startDate2.toISOString().slice(0, -5) , startDate.toISOString().slice(0, -5)
+                    ]),
+                    Apis.instance().history_api().exec("get_market_history", [
+                        base.get("id"), quote.get("id"), bucketSize, startDate3.toISOString().slice(0, -5) , startDate2.toISOString().slice(0, -5)
                     ])
                 ])
                 .then((results) => {
+                    const data1 = results[9] || [];
+                    const data2 = results[8] || [];
                     subs[subID] = subscription;
-
                     if (__DEV__) console.timeEnd("Fetch market data");
                     dispatch({
                         limits: results[1],
                         calls: results[2],
                         settles: results[3],
-                        price: results[4],
+                        price: data1.concat(data2.concat(results[4])),
                         buckets: results[5],
                         history: results[6],
                         recent: results[7],
@@ -395,21 +417,21 @@ class MarketsActions {
         });
     }
 
-    cancelLimitOrderSuccess(orderID) {
+    cancelLimitOrderSuccess(ids) {
         return (dispatch) => {
             /* In the case of many cancel orders being issued at the same time,
             * we batch them here and dispatch them all at once at a frequency
             * defined by "dispatchCancelTimeout"
             */
             if (!dispatchCancelTimeout) {
-                cancelBatchIDs = cancelBatchIDs.push(orderID);
+                cancelBatchIDs = cancelBatchIDs.concat(ids);
                 dispatchCancelTimeout = setTimeout(() => {
                     dispatch(cancelBatchIDs.toJS());
                     dispatchCancelTimeout = null;
                     cancelBatchIDs = cancelBatchIDs.clear();
                 }, cancelBatchTime);
             } else {
-                cancelBatchIDs = cancelBatchIDs.push(orderID);
+                cancelBatchIDs = cancelBatchIDs.concat(ids);
             }
         };
     }
@@ -436,6 +458,10 @@ class MarketsActions {
                 });
             });
         };
+    }
+
+    toggleStars() {
+        return true;
     }
 
 }

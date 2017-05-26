@@ -159,18 +159,24 @@ class DepthHighChart extends React.Component {
 			series: [],
 			yAxis: {
 				labels: {
-					enabled: false,
+					enabled: true,
 					style: {
-						color: "#FFFFFF"
+						color: primaryText
+					},
+					formatter: function() {
+						return utils.format_number(this.value, quote.get("precision"));
 					}
 				},
+				opposite: false,
 				title: {
 					text: null,
 					style: {
 						color: "#FFFFFF"
 					}
 				},
-				gridLineWidth: 0,
+				gridLineWidth: 1,
+				gridLineColor: "rgba(196, 196, 196, 0.30)",
+				gridZIndex: 1,
 				crosshair: {
 					snap: false
 				},
@@ -211,10 +217,31 @@ class DepthHighChart extends React.Component {
 
 			config.xAxis.min = middleValue * 0.4;
 			config.xAxis.max = middleValue * 1.6;
+			let yMax = 0;
+			flatBids.forEach(b => {
+				if (b[0] >= config.xAxis.min) {
+					yMax = Math.max(b[1], yMax);
+				}
+			});
+			flatAsks.forEach(a => {
+				if (a[0] <= config.xAxis.max) {
+					yMax = Math.max(a[1], yMax);
+				}
+			});
+			config.yAxis.max = yMax * 1.15;
+
+			// Adjust y axis label decimals
+			let yLabelDecimals = yMax > 10 ? 0 : yMax > 1 ? 2 : 5;
+			config.yAxis.labels.formatter = function() {
+				return utils.format_number(this.value, yLabelDecimals);
+			}
 
 		} else if (flatBids.length && !flatAsks.length) {
 			config.xAxis.min = flatBids[flatBids.length - 1][0] * 0.4;
 			config.xAxis.max = flatBids[flatBids.length - 1][0] * 1.6;
+		} else if (flatAsks.length && !flatBids.length) {
+			config.xAxis.min = 0;
+			config.xAxis.max = flatAsks[0][0] * 2;
 		}
 
 		if (this.props.hasPrediction) {

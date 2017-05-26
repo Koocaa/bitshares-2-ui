@@ -10,7 +10,7 @@ import AmountSelector from "components/Utility/AmountSelector";
 import AccountActions from "actions/AccountActions";
 import Modal from "react-foundation-apps/src/modal";
 import ZfApi from "react-foundation-apps/src/utils/foundation-api";
-import {validateAddress, WithdrawAddresses} from "common/blockTradesMethods";
+import { validateAddress, WithdrawAddresses } from "common/blockTradesMethods";
 
 class WithdrawModalBlocktrades extends React.Component {
 
@@ -28,7 +28,7 @@ class WithdrawModalBlocktrades extends React.Component {
         balance: ChainTypes.ChainObject
     };
 
-    constructor( props ) {
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -40,7 +40,8 @@ class WithdrawModalBlocktrades extends React.Component {
             confirmation_is_valid: false,
             withdraw_address_selected: WithdrawAddresses.getLast(props.output_wallet_type),
             memo: "",
-            withdraw_address_first: true
+            withdraw_address_first: true,
+            empty_withdraw_value: false
         };
 
         this._validateAddress(this.state.withdraw_address, props);
@@ -50,11 +51,14 @@ class WithdrawModalBlocktrades extends React.Component {
         this.setState( {memo: e.target.value} );
     }
 
-    onWithdrawAmountChange( {amount, asset} ) {
-        this.setState( {withdraw_amount:amount} );
+    onWithdrawAmountChange( {amount} ) {
+        this.setState({
+            withdraw_amount: amount,
+            empty_withdraw_value: !parseFloat(amount)
+        });
     }
 
-    onSelectChanged(index, e) {
+    onSelectChanged(index) {
         let new_withdraw_address = WithdrawAddresses.get(this.props.output_wallet_type)[index];
         WithdrawAddresses.setLast({wallet: this.props.output_wallet_type, address: new_withdraw_address});
 
@@ -95,10 +99,9 @@ class WithdrawModalBlocktrades extends React.Component {
     onSubmit() {
 
         if ((!this.state.withdraw_address_check_in_progress) && (this.state.withdraw_address && this.state.withdraw_address.length) && (this.state.withdraw_amount !== null)) {
-
             if (!this.state.withdraw_address_is_valid) {
 				ZfApi.publish(this.getWithdrawModalId(), "open");
-	        } else {
+	        } else if (parseFloat(this.state.withdraw_amount) > 0){
 
     		   if (!WithdrawAddresses.has(this.props.output_wallet_type)) {
 
@@ -122,8 +125,7 @@ class WithdrawModalBlocktrades extends React.Component {
                 // lStorage.setItem(`history_address_last_${this.props.output_wallet_type}`, this.state.withdraw_address);
                 let asset = this.props.asset;
                 let precision = utils.get_asset_precision(asset.get("precision"));
-                let amount = this.state.withdraw_amount.replace( /,/g, "" )
-                console.log( "withdraw_amount: ", amount );
+                let amount = String.prototype.replace.call(this.state.withdraw_amount, /,/g, "");
 
                 AccountActions.transfer(
                     this.props.account.get("id"),
@@ -132,6 +134,14 @@ class WithdrawModalBlocktrades extends React.Component {
                     asset.get("id"),
                     this.props.output_coin_type + ":" + this.state.withdraw_address + (this.state.memo ? ":" + new Buffer(this.state.memo, "utf-8") : "")
                 );
+
+                this.setState({
+                    empty_withdraw_value: false
+                });
+            } else {
+                this.setState({
+                    empty_withdraw_value: true
+                });
             }
         }
 	}
@@ -159,8 +169,7 @@ class WithdrawModalBlocktrades extends React.Component {
 		// localStorage.setItem(`history_address_last_${this.props.output_wallet_type}`, this.state.withdraw_address);
         let asset = this.props.asset;
         let precision = utils.get_asset_precision(asset.get("precision"));
-        let amount = this.state.withdraw_amount.replace( /,/g, "" )
-        console.log( "withdraw_amount: ", amount );
+        let amount = String.prototype.replace.call(this.state.withdraw_amount, /,/g, "");
         AccountActions.transfer(
             this.props.account.get("id"),
             this.props.issuer.get("id"),
@@ -192,7 +201,8 @@ class WithdrawModalBlocktrades extends React.Component {
     onAccountBalance() {
         if (Object.keys(this.props.account.get("balances").toJS()).includes(this.props.asset.get("id")) ) {
             this.setState({
-                withdraw_amount: this.props.balance.get("balance") / utils.get_asset_precision(this.props.asset.get("precision"))
+                withdraw_amount: this.props.balance.get("balance") / utils.get_asset_precision(this.props.asset.get("precision")),
+                empty_withdraw_value: false
             });
         }
     }
@@ -286,6 +296,8 @@ class WithdrawModalBlocktrades extends React.Component {
                         onChange={this.onWithdrawAmountChange.bind(this)}
                         display_balance={balance}
                     />
+                    {this.state.empty_withdraw_value ? <p className="has-error no-margin" style={{paddingTop: 10}}><Translate content="transfer.errors.valid" /></p>:null}
+
                 </div>
                 <div className="content-block">
                     <label><Translate component="span" content="modal.withdraw.address"/></label>

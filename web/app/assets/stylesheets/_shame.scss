@@ -337,7 +337,8 @@ label.inline {
 }
 
 .asset-prefix-replaced {
-  text-transform: uppercase;
+  // text-transform: uppercase;
+  font-variant: small-caps;
 }
 
 select {
@@ -345,7 +346,9 @@ select {
 }
 
 select.bts-select {
+    border-radius: 5px;
     cursor:pointer;
+    height: 2em;
     border: none;
     background: none;
     background-color: transparent;
@@ -354,7 +357,12 @@ select.bts-select {
     -webkit-appearance: menulist;
     -moz-appearance: menulist;
     appearance: menulist;
-    height: inherit;
+}
+
+@media screen and (min-width: 900px) {
+    .column-show-small {
+        display: none !important;
+    }
 }
 
 @media screen and (max-width: 600px) {
@@ -375,27 +383,12 @@ select.bts-select {
     }
 }
 
-.block-content-header {
-  font-size: 1.4375rem;
-  padding: 0.5rem 0;
-
-  @include breakpoint(small only) {
-      font-size: 1.125rem;
-  }
+input, textarea {
+    border-radius: 5px !important;
 }
 
 input[type=number] {
     -moz-appearance:textfield;
-}
-
-.account-drop-down {
-  a.button {
-    background-color: transparent;
-    text-transform: none;
-  }
-  a:active.button, a:hover.button {
-    background-color: transparent !important;
-  }
 }
 
 .clickable {
@@ -418,4 +411,23 @@ section input[type="text"], section input[type="password"] {
   &:hover, &:active, &:focus {
     border:none;
   }
+}
+
+section progress {
+    max-width: 30rem;
+}
+
+.notification {
+    table > tr > td {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        span {
+            line-height: 1.1rem;
+        }
+    }
+}
+
+.help-tooltip {
+    cursor: help;
 }

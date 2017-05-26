@@ -20,8 +20,8 @@ class AccountVotingProxy extends React.Component {
     static defaultProps = {
         knownProxies: List(
             [
-                "xeroc", "baozi", "bitcrab", "laomao", "bitshares-munich-wallet",
-                "bts1988", "harvey", "fav", "jonnybitcoin", "bitsharesblocks"
+                "xeroc", "baozi", "bitcrab", "laomao", "bitshares-munich-wallet", "abit", "dahu",
+                "bts1988", "harvey", "fav", "jonnybitcoin", "bitsharesblocks", "customminer"
             ]
         ),
         existingProxy: "1.2.5" // proxy-to-self
@@ -121,6 +121,9 @@ class AccountVotingProxy extends React.Component {
                 a.get("name") !== currentProxyName
             );
         })
+        .sort((a, b) => {
+            return (a.get("name") > b.get("name") ? 1 : a.get("name") < b.get("name") ? -1 : 0);
+        })
         .map(proxy => {
             return (
                 <tr key={proxy.get("id")}>
@@ -131,7 +134,7 @@ class AccountVotingProxy extends React.Component {
                             custom_image={null}
                         />
                     </td>
-                    <td><LinkToAccountById account={proxy.get("id")} subpage="voting" /></td>
+                    <td><Link to={`/account/${proxy.get("name")}`}>{proxy.get("name")}</Link></td>
                     <td className="text-right"><button className="button" onClick={this.onProxyChange.bind(this, proxy.get("name"))}>Set</button></td>
                 </tr>
             );
@@ -152,19 +155,18 @@ class AccountVotingProxy extends React.Component {
                     </div>
                 </div> :
                 <AccountSelector
-                    label="account.votes.proxy"
+                     label="account.votes.proxy"
                      error={error}
                      account={this.state.current_proxy_input}
                      accountName={this.state.current_proxy_input}
                      onChange={this.onProxyChange}
                      onAccountChanged={this.onProxyAccountChange}
-                     ref="proxy_selector" tabIndex={1}
-                     onAction={this._onNavigate.bind(this, `/account/${this.state.current_proxy_input}/voting/`)}
-                     action_label="account.votes.go_proxy"
+                     tabIndex={1}
+                     size={60}
                 />}
                 {!isDisabled && knownProxies.length ? (
-                <div>
-                    <Translate component="h4" content="account.votes.proxy_known" />
+                <div style={{paddingTop: 20}}>
+                    <Translate component="h5" content="account.votes.proxy_known" />
                     <table className="table">
                         <tbody>
                             {proxies}

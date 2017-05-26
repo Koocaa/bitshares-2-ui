@@ -27,6 +27,7 @@ import Highcharts from "highcharts/highstock";
 import ExchangeHeader from "./ExchangeHeader";
 import Translate from "react-translate-component";
 import { Apis } from "bitsharesjs-ws";
+import GatewayActions from "actions/GatewayActions";
 
 Highcharts.setOptions({
     global: {
@@ -135,6 +136,13 @@ class Exchange extends React.Component {
         return `lastMarket${chainID ? ("_" + chainID.substr(0, 8)) : ""}`;
     }
 
+    componentWillMount() {
+        if (Apis.instance().chain_id.substr(0, 8)=== "4018d784") {
+            GatewayActions.fetchCoins.defer();
+            GatewayActions.fetchBridgeCoins.defer();
+        }
+    }
+
     componentDidMount() {
         let centerContainer = this.refs.center;
         if (centerContainer) {
@@ -144,7 +152,7 @@ class Exchange extends React.Component {
             [this._getLastMarketKey()]: this.props.quoteAsset.get("symbol") + "_" + this.props.baseAsset.get("symbol")
         });
 
-        window.addEventListener("resize", this._getWindowSize, false);
+        window.addEventListener("resize", this._getWindowSize, {capture: false, passive: true});
     }
 
     shouldComponentUpdate(nextProps) {
@@ -179,7 +187,7 @@ class Exchange extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this._getWindowSize, false);
+        window.removeEventListener("resize", this._getWindowSize);
     }
 
     _getFee(asset) {
@@ -279,7 +287,7 @@ class Exchange extends React.Component {
 
         if (current.for_sale.gt(sellBalance) && !isPredictionMarket) {
             return notify.addNotification({
-                message: "Insufficient funds to place current. Required: " + current.for_sale.getAmount() + " " + sellAsset.get("symbol"),
+                message: "Insufficient funds to place order, you need at least " + current.for_sale.getAmount({real: true}) + " " + sellAsset.get("symbol"),
                 level: "error"
             });
         }
@@ -763,9 +771,9 @@ class Exchange extends React.Component {
         this.forceUpdate();
     }
 
-    _onInputSell(type, e) {
+    _onInputSell(type, isBid, e) {
         let current = this.state[type];
-        const isBid = type === "bid";
+        // const isBid = type === "bid";
         current.for_sale.setAmount({real: parseFloat(e.target.value) || 0});
 
         if (current.price.isValid()) {
@@ -778,9 +786,9 @@ class Exchange extends React.Component {
         this.forceUpdate();
     }
 
-    _onInputReceive(type, e) {
+    _onInputReceive(type, isBid, e) {
         let current = this.state[type];
-        const isBid = type === "bid";
+        // const isBid = type === "bid";
         current.to_receive.setAmount({real: parseFloat(e.target.value) || 0});
 
         if (current.price.isValid()) {
@@ -801,21 +809,27 @@ class Exchange extends React.Component {
         let baseBlackList = baseAsset.getIn(["options", "blacklist_markets"]).toJS();
         let quoteBlackList = quoteAsset.getIn(["options", "blacklist_markets"]).toJS();
 
-        if (quoteWhiteList.length && quoteWhiteList.indexOf(baseAsset.get("id") === -1)) {
+        if (quoteWhiteList.length && quoteWhiteList.indexOf(baseAsset.get("id")) === -1) {
             return {isFrozen: true, frozenAsset: quoteAsset.get("symbol")};
         }
-        if (baseWhiteList.length && baseWhiteList.indexOf(quoteAsset.get("id") === -1)) {
+        if (baseWhiteList.length && baseWhiteList.indexOf(quoteAsset.get("id")) === -1) {
             return {isFrozen: true, frozenAsset: baseAsset.get("symbol")};
         }
 
-        if (quoteBlackList.length && quoteBlackList.indexOf(baseAsset.get("id") !== -1)) {
+        if (quoteBlackList.length && quoteBlackList.indexOf(baseAsset.get("id")) !== -1) {
             return {isFrozen: true, frozenAsset: quoteAsset.get("symbol")};
         }
-        if (baseBlackList.length && baseBlackList.indexOf(quoteAsset.get("id") !== -1)) {
+        if (baseBlackList.length && baseBlackList.indexOf(quoteAsset.get("id")) !== -1) {
             return {isFrozen: true, frozenAsset: baseAsset.get("symbol")};
         }
 
         return {isFrozen: false};
+    }
+
+    _toggleMiniChart() {
+        SettingsActions.changeViewSetting({
+            miniDepthChart: !this.props.miniDepthChart
+        });
     }
 
     render() {
@@ -937,8 +951,13 @@ class Exchange extends React.Component {
 
         let orderMultiplier = leftOrderBook ? 2 : 1;
 
+
         let buyForm = isFrozen ? null : (
             <BuySell
+                onBorrow={!isNullAccount && baseIsBitAsset ? this._borrowBase.bind(this) : null}
+                currentAccount={currentAccount}
+                backedCoin={this.props.backedCoins.find(a => a.symbol === base.get("symbol"))}
+                currentBridges={this.props.bridgeCoins.get(base.get("symbol")) || null}
                 smallScreen={smallScreen}
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
@@ -954,11 +973,12 @@ class Exchange extends React.Component {
                 total={bid.forSaleText}
                 quote={quote}
                 base={base}
-                amountChange={this._onInputReceive.bind(this, "bid")}
+                amountChange={this._onInputReceive.bind(this, "bid", true)}
                 priceChange={this._onInputPrice.bind(this, "bid")}
                 setPrice={this._currentPriceClick.bind(this)}
-                totalChange={this._onInputSell.bind(this, "bid")}
+                totalChange={this._onInputSell.bind(this, "bid", false)}
                 balance={baseBalance}
+                balanceId={base.get("id")}
                 onSubmit={this._createLimitOrderConfirm.bind(this, quote, base, baseBalance, coreBalance, buyFeeAsset, "buy")}
                 balancePrecision={base.get("precision")}
                 quotePrecision={quote.get("precision")}
@@ -978,6 +998,10 @@ class Exchange extends React.Component {
 
         let sellForm = isFrozen ? null : (
             <BuySell
+                onBorrow={!isNullAccount && quoteIsBitAsset ? this._borrowQuote.bind(this) : null}
+                currentAccount={currentAccount}
+                backedCoin={this.props.backedCoins.find(a => a.symbol === quote.get("symbol"))}
+                currentBridges={this.props.bridgeCoins.get(quote.get("symbol")) || null}
                 smallScreen={smallScreen}
                 isOpen={this.state.buySellOpen}
                 onToggleOpen={this._toggleOpenBuySell.bind(this)}
@@ -993,11 +1017,12 @@ class Exchange extends React.Component {
                 total={ask.toReceiveText}
                 quote={quote}
                 base={base}
-                amountChange={this._onInputSell.bind(this, "ask")}
+                amountChange={this._onInputSell.bind(this, "ask", false)}
                 priceChange={this._onInputPrice.bind(this, "ask")}
                 setPrice={this._currentPriceClick.bind(this)}
-                totalChange={this._onInputReceive.bind(this, "ask")}
+                totalChange={this._onInputReceive.bind(this, "ask", true)}
                 balance={quoteBalance}
+                balanceId={quote.get("id")}
                 onSubmit={this._createLimitOrderConfirm.bind(this, base, quote, quoteBalance, coreBalance, sellFeeAsset, "sell")}
                 balancePrecision={quote.get("precision")}
                 quotePrecision={quote.get("precision")}
@@ -1063,38 +1088,10 @@ class Exchange extends React.Component {
                             showCallLimit={showCallLimit} feedPrice={feedPrice}
                             marketReady={marketReady} latestPrice={latestPrice}
                             showDepthChart={showDepthChart}
-                            showIndicators={!showDepthChart && this.props.priceData.length}
-                            buckets={buckets} bucketSize={bucketSize}
-                            currentPeriod={this.state.currentPeriod}
-                            changeBucketSize={this._changeBucketSize.bind(this)}
-                            changeZoomPeriod={this._changeZoomPeriod.bind(this)}
                             onSelectIndicators={this._onSelectIndicators.bind(this)}
                             marketStats={marketStats}
-                            onBorrowQuote={!isNullAccount && quoteIsBitAsset ? this._borrowQuote.bind(this) : null}
-                            onBorrowBase={!isNullAccount && baseIsBitAsset ? this._borrowBase.bind(this) : null}
                             onToggleCharts={this._toggleCharts.bind(this)}
-                            indicators={indicators}
-                            onChangeIndicators={this._changeIndicator.bind(this)}
-                            tools={tools}
-                            onChangeTool={(key) => {
-                                let tools = cloneDeep(this.state.tools);
-                                for (let k in tools) {
-                                    if (k === key) {
-                                        tools[k] = !tools[k];
-                                    } else {
-                                        tools[k] = false;
-                                    }
-                                }
-                                this.setState({tools}, () => {
-                                    this.setState({tools: {fib: false, trendline: false}});
-                                });
-                            }}
-                            onChangeChartHeight={this.onChangeChartHeight.bind(this)}
-                            chartHeight={chartHeight}
                             showVolumeChart={showVolumeChart}
-                            onToggleVolume={() => {SettingsActions.changeViewSetting({showVolumeChart: !showVolumeChart});}}
-                            onChangeIndicatorSetting={this._changeIndicatorSetting.bind(this)}
-                            indicatorSettings={indicatorSettings}
                         />
 
                         <div className="grid-block vertical no-padding" id="CenterContent" ref="center">
@@ -1113,12 +1110,35 @@ class Exchange extends React.Component {
                                     marketReady={marketReady}
                                     indicators={indicators}
                                     indicatorSettings={indicatorSettings}
-                                    bucketSize={bucketSize}
                                     latest={latestPrice}
                                     theme={this.props.settings.get("themes")}
                                     zoom={this.state.currentPeriod}
                                     tools={tools}
                                     showVolumeChart={showVolumeChart}
+
+                                    buckets={buckets} bucketSize={bucketSize}
+                                    currentPeriod={this.state.currentPeriod}
+                                    changeBucketSize={this._changeBucketSize.bind(this)}
+                                    changeZoomPeriod={this._changeZoomPeriod.bind(this)}
+                                    onSelectIndicators={this._onSelectIndicators.bind(this)}
+                                    onChangeIndicators={this._changeIndicator.bind(this)}
+                                    onChangeTool={(key) => {
+                                        let tools = cloneDeep(this.state.tools);
+                                        for (let k in tools) {
+                                            if (k === key) {
+                                                tools[k] = !tools[k];
+                                            } else {
+                                                tools[k] = false;
+                                            }
+                                        }
+                                        this.setState({tools}, () => {
+                                            this.setState({tools: {fib: false, trendline: false}});
+                                        });
+                                    }}
+                                    onChangeChartHeight={this.onChangeChartHeight.bind(this)}
+                                    chartHeight={chartHeight}
+                                    onToggleVolume={() => {SettingsActions.changeViewSetting({showVolumeChart: !showVolumeChart});}}
+                                    onChangeIndicatorSetting={this._changeIndicatorSetting.bind(this)}
                                 />
                             </div>) : (
                             <div className="grid-block vertical no-padding shrink" >
@@ -1164,6 +1184,7 @@ class Exchange extends React.Component {
                                     )}
                                     headerStyle={{paddingTop: 0}}
                                     history={activeMarketHistory}
+                                    currentAccount={currentAccount}
                                     myHistory={currentAccount.get("history")}
                                     base={base}
                                     quote={quote}
@@ -1246,11 +1267,20 @@ class Exchange extends React.Component {
                                         {name: "change", index: 5}
                                     ]
                                 }
+                                findColumns={
+                                    [
+                                        {name: "market", index: 1},
+                                        {name: "issuer", index: 2},
+                                        {name: "vol", index: 3},
+                                        {name: "add", index: 4}
+                                    ]
+                                }
                                 current={`${quoteSymbol}_${baseSymbol}`}
                             />
                         </div>
-                        {/* <div className="grid-block no-padding no-margin vertical shrink">
-                            <DepthHighChart
+                        <div style={{padding: !this.props.miniDepthChart ? 0 : "0 0 40px 0"}} className="grid-block no-margin vertical shrink">
+                            <div onClick={this._toggleMiniChart.bind(this)} className="exchange-content-header clickable" style={{textAlign: "left", paddingRight: 10}}>{this.props.miniDepthChart ? <span>&#9660;</span> : <span>&#9650;</span>}</div>
+                            {this.props.miniDepthChart ? <DepthHighChart
                                     marketReady={marketReady}
                                     orders={marketLimitOrders}
                                     showCallLimit={showCallLimit}
@@ -1274,8 +1304,8 @@ class Exchange extends React.Component {
                                     hasPrediction={hasPrediction}
                                     noText={true}
                                     theme={this.props.settings.get("themes")}
-                                />
-                        </div> */}
+                                /> : null}
+                        </div>
                     </div>
 
                     {!isNullAccount && quoteIsBitAsset  ?

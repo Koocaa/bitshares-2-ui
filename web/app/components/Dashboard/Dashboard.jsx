@@ -8,6 +8,8 @@ import utils from "common/utils";
 import { Apis } from "bitsharesjs-ws";
 var logo = require("assets/logo-ico-blue.png");
 import LoadingIndicator from "../LoadingIndicator";
+import SettingsActions from "actions/SettingsActions";
+import WalletUnlockActions from "actions/WalletUnlockActions";
 
 class Dashboard extends React.Component {
 
@@ -15,22 +17,45 @@ class Dashboard extends React.Component {
         super();
         let marketsByChain = {
             "4018d784":[
-                ["BTS", "CNY"],
-                ["CNY", "OPEN.BTC"],
-                ["CNY", "USD"],
-                ["OPEN.BTC", "BTS", false],
+                ["USD", "BTS"],
                 ["USD", "OPEN.BTC"],
                 ["USD", "OPEN.USDT"],
-                ["BTS", "USD"],
+                ["USD", "OPEN.ETH"],
+                ["USD", "OPEN.DASH"],
+                ["USD", "GOLD"],
+                ["USD", "HERO"],
+                ["CNY", "OPEN.BTC"],
+                ["CNY", "USD"],
+                ["CNY", "OPEN.ETH"],
+                ["CNY", "YOYOW"],
+                ["OPEN.BTC", "BTS"],
+                ["OPEN.BTC", "OPEN.DASH"],
+                ["OPEN.BTC", "OBITS"],
+                ["OPEN.BTC", "EOS"],
+                ["OPEN.BTC", "BLOCKPAY"],
+                ["OPEN.BTC", "OPEN.DGD"],
+                ["OPEN.BTC", "OPEN.STEEM"],
+                ["BTS", "CNY"],
+                ["BTS", "ICOO"],
+                ["BTS", "HERO"],
                 ["BTS", "GOLD"],
                 ["BTS", "BLOCKPAY"],
-                ["BTS", "OBITS"],
-                ["BTS", "SILVER"],
-                ["OPEN.BTC", "OPEN.DGD", false],
                 ["BTS", "BTWTY"],
-                [ "BTS", "OPEN.ETH"],
-                ["BTS", "ICOO"],
-                ["OPEN.BTC", "OPEN.STEEM"]
+                ["BTS", "OBITS"],
+                ["BTS", "EOS"],
+                ["KAPITAL", "OPEN.BTC"],
+                ["BTS", "SILVER"],
+                ["USD", "OPEN.STEEM"],
+                ["USD", "OPEN.MAID"],
+                ["BTS", "OPEN.ETH"],
+                ["OPEN.USDT", "OPEN.BTC"],
+                ["BTS", "OPEN.STEEM"],
+                ["OPEN.BTC", "OPEN.MAID"],
+                ["BTS", "OPEN.MAID"],
+                ["BTS", "OPEN.HEAT"],
+                ["BTS", "OPEN.INCENT"],
+                ["HEMPSWEET", "OPEN.BTC"],
+                ["KAPITAL", "BTS"],
             ],
             "39f5e2ed": [
                 ["TEST", "PEG.FAKEUSD"],
@@ -50,36 +75,24 @@ class Dashboard extends React.Component {
         };
 
         this._setDimensions = this._setDimensions.bind(this);
+        // this._sortMarketsByVolume = this._sortMarketsByVolume.bind(this);
     }
-
-    // componentWillMount() {
-    //     fetch(__UI_API__ + `/markets/${Apis.instance().chain_id.substr(0, 10)}`).then( (reply) => {
-    //         if (reply.ok) {
-    //             return reply.json().then(({markets, newAssets}) => {
-    //                 console.log("markets:", markets, newAssets);
-    //                 this.setState({
-    //                     featuredMarkets: markets.length ? markets: this.state.featuredMarkets,
-    //                     newAssets: newAssets.length ? newAssets : this.state.newAssets
-    //                 });
-    //             });
-    //         }
-    //     }).catch(err => {
-    //         console.log("Markets API not available:", err);
-    //     });
-    // }
 
     componentDidMount() {
         this._setDimensions();
 
-        window.addEventListener("resize", this._setDimensions, false);
+        window.addEventListener("resize", this._setDimensions, {capture: false, passive: true});
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         return (
             !utils.are_equal_shallow(nextState.featuredMarkets, this.state.featuredMarkets) ||
+            !utils.are_equal_shallow(nextProps.lowVolumeMarkets, this.props.lowVolumeMarkets) ||
             !utils.are_equal_shallow(nextState.newAssets, this.state.newAssets) ||
             nextProps.linkedAccounts !== this.props.linkedAccounts ||
+            // nextProps.marketStats !== this.props.marketStats ||
             nextProps.ignoredAccounts !== this.props.ignoredAccounts ||
+            nextProps.passwordAccount !== this.props.passwordAccount ||
             nextState.width !== this.state.width ||
             nextProps.accountsReady !== this.props.accountsReady ||
             nextState.showIgnored !== this.state.showIgnored
@@ -87,7 +100,7 @@ class Dashboard extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this._setDimensions, false);
+        window.removeEventListener("resize", this._setDimensions);
     }
 
     _setDimensions() {
@@ -104,39 +117,109 @@ class Dashboard extends React.Component {
         });
     }
 
+    // _sortMarketsByVolume(a, b) {
+    //     let idA = a[1] + "_" + a[0];
+    //     let idB = b[1] + "_" + b[0];
+    //     let statsA = this.props.marketStats.get(idA);
+    //     let statsB = this.props.marketStats.get(idB);
+    //     if (!statsA || !statsB) return -1;
+    //
+    //     function getEquivalentVolume(stats, market, marketStats) {
+    //         let coreVolume = stats.volumeBaseAsset.asset_id === "1.3.0" ? stats.volumeBaseAsset :
+    //            stats.volumeQuoteAsset.asset_id === "1.3.0" ? stats.volumeQuoteAsset : 0;
+    //
+    //         if (!coreVolume) {
+    //             let options = [
+    //                 `${market[1]}_BTS`,
+    //                 `BTS_${market[1]}`,
+    //                 `${market[0]}_BTS`,
+    //                 `BTS_${market[0]}`,
+    //             ];
+    //             let convertUsingStats;
+    //             for (var i = 0; i < options.length; i++) {
+    //                 convertUsingStats = marketStats.get(options[i]);
+    //                 if (convertUsingStats) break;
+    //             }
+    //
+    //             if (convertUsingStats && convertUsingStats.price) {
+    //                 if (convertUsingStats.price.base.asset_id === "1.3.0") {
+    //                     if (stats.volumeBaseAsset.asset_id === convertUsingStats.price.quote.asset_id) {
+    //                         coreVolume = stats.volumeBaseAsset.times(convertUsingStats.price);
+    //                     } else if (stats.volumeQuoteAsset.asset_id === convertUsingStats.price.quote.asset_id) {
+    //                         coreVolume = stats.volumeQuoteAsset.times(convertUsingStats.price);
+    //                     }
+    //                 } else if (convertUsingStats.price.quote.asset_id === "1.3.0") {
+    //                     if (stats.volumeBaseAsset.asset_id === convertUsingStats.price.base.asset_id) {
+    //                         coreVolume = stats.volumeBaseAsset.times(convertUsingStats.price);
+    //                     } else if (stats.volumeQuoteAsset.asset_id === convertUsingStats.price.base.asset_id) {
+    //                         coreVolume = stats.volumeQuoteAsset.times(convertUsingStats.price);
+    //                     }
+    //                 }
+    //
+    //                 console.log(market, "coreVolume", coreVolume && coreVolume.getAmount(), coreVolume && coreVolume.asset_id);
+    //
+    //             } else {
+    //                 console.log(market, "*** Unable to convert price ***");
+    //             }
+    //         }
+    //
+    //         return coreVolume;
+    //     }
+    //
+    //     let coreVolumeA = getEquivalentVolume(statsA, a, this.props.marketStats);
+    //     let coreVolumeB =  getEquivalentVolume(statsB, b, this.props.marketStats);
+    //
+    //     if (coreVolumeA && coreVolumeB) {
+    //         return coreVolumeB.getAmount() - coreVolumeA.getAmount();
+    //     }
+    //     return 0;
+    // }
+
     render() {
-        let { linkedAccounts, myIgnoredAccounts, accountsReady } = this.props;
+        let { linkedAccounts, myIgnoredAccounts, accountsReady, passwordAccount } = this.props;
         let {width, showIgnored, featuredMarkets, newAssets} = this.state;
+
+        if (passwordAccount && !linkedAccounts.has(passwordAccount)) {
+            linkedAccounts = linkedAccounts.add(passwordAccount);
+        }
         let names = linkedAccounts.toArray().sort();
+        if (passwordAccount && names.indexOf(passwordAccount) === -1) names.push(passwordAccount);
         let ignored = myIgnoredAccounts.toArray().sort();
 
-        let accountCount = linkedAccounts.size + myIgnoredAccounts.size;
+        let accountCount = linkedAccounts.size + myIgnoredAccounts.size + (passwordAccount ? 1 : 0);
 
         if (!accountsReady) {
             return <LoadingIndicator />;
         }
 
-        let markets = featuredMarkets.map((pair, index) => {
+        let validMarkets = 0;
 
+        let markets = featuredMarkets
+        // .sort(this._sortMarketsByVolume)
+        .map(pair => {
+            let isLowVolume = this.props.lowVolumeMarkets.get(pair[1] + "_" + pair[0]) || this.props.lowVolumeMarkets.get(pair[0] + "_" + pair[1]);
+            if (!isLowVolume) validMarkets++;
             let className = "";
-            if (index > 5) {
-                className += "show-for-medium";
-            }
-            if (index > 8) {
-                className += " show-for-large";
+            if (validMarkets > 9) {
+                className += ` show-for-${!accountCount ? "xlarge" : "large"}`;
+            } else if (validMarkets > 6) {
+                className += ` show-for-${!accountCount ? "large" : "medium"}`;
             }
 
             return (
                 <MarketCard
                     key={pair[0] + "_" + pair[1]}
+                    marketId={pair[1] + "_" + pair[0]}
                     new={newAssets.indexOf(pair[1]) !== -1}
                     className={className}
                     quote={pair[0]}
                     base={pair[1]}
                     invert={pair[2]}
+                    isLowVolume={isLowVolume}
+                    hide={validMarkets > 20}
                 />
             );
-        });
+        }).filter(a => !!a);
 
         if (!accountCount) {
             return (
@@ -150,15 +233,23 @@ class Dashboard extends React.Component {
                                 <Translate unsafe content="account.intro_text_2" component="p" />
                                 <Translate unsafe content="account.intro_text_3" component="p" />
                                 <Translate unsafe content="account.intro_text_4" component="p" />
+                                <div className="button-group">
+                                    <div className="button create-account" onClick={() => {this.props.router.push("create-account");}}>
+                                        <Translate content="account.create_new" />
+                                    </div>
 
-                                <div className="button create-account" onClick={() => {this.props.router.push("create-account");}}>
-                                    <Translate content="header.create_account" />
+                                    <div className="button create-account" onClick={() => {
+                                        SettingsActions.changeSetting({setting: "passwordLogin", value: true});
+                                        WalletUnlockActions.unlock.defer();
+                                    }}>
+                                        <Translate content="account.password_login" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="grid-container small-12 medium-7" style={{paddingTop: 44}}>
                             <Translate content="exchange.featured" component="h4" style={{paddingLeft: 30}}/>
-                            <div className="grid-block small-up-2 medium-up-3 large-up-4 no-overflow">
+                            <div className="grid-block small-up-1 large-up-3 xlarge-up-4 no-overflow fm-outer-container">
                                 {markets}
                             </div>
                         </div>
@@ -170,8 +261,10 @@ class Dashboard extends React.Component {
         return (
             <div ref="wrapper" className="grid-block page-layout vertical">
                 <div ref="container" className="grid-container" style={{padding: "25px 10px 0 10px"}}>
-                    <Translate content="exchange.featured" component="h4" />
-                    <div className="grid-block small-up-2 medium-up-3 large-up-4 no-overflow">
+                    <div className="block-content-header" style={{marginBottom: 15}}>
+                    <Translate content="exchange.featured"/>
+                    </div>
+                    <div className="grid-block small-up-1 medium-up-3 large-up-4 no-overflow fm-outer-container">
                         {markets}
                     </div>
 
@@ -193,7 +286,7 @@ class Dashboard extends React.Component {
 
                     {accountCount ? <RecentTransactions
                         style={{marginBottom: 20, marginTop: 20}}
-                        accountsList={this.props.linkedAccounts}
+                        accountsList={linkedAccounts}
                         limit={10}
                         compactView={false}
                         fullHeight={true}

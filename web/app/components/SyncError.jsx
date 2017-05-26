@@ -7,6 +7,7 @@ import SettingsActions from "actions/SettingsActions";
 import {Apis} from "bitsharesjs-ws";
 import Icon from "./Icon/Icon";
 import WebsocketAddModal from "./Settings/WebsocketAddModal";
+import counterpart from "counterpart";
 
 class SyncError extends React.Component {
 
@@ -37,7 +38,11 @@ class SyncError extends React.Component {
 
     render() {
         let options = this.props.apis.map(entry => {
-            return <option key={entry.url} value={entry.url}>{entry.location || entry.url} {entry.location ? `(${entry.url})` : null}</option>;
+            let onlyDescription = entry.url.indexOf("fake.automatic-selection") !== -1;
+            let {location} = entry;
+            if (location && typeof location === "object" && "translate" in location) location = counterpart.translate(location.translate);
+
+            return <option key={entry.url} value={entry.url}>{location || entry.url} {!onlyDescription && location ? `(${entry.url})` : null}</option>;
         });
 
         return (
@@ -51,7 +56,7 @@ class SyncError extends React.Component {
                     <p style={{marginBottom: 0}}><Translate content="sync_fail.sub_text_1" /></p>
                     <Icon name="clock" size="5x"/>
 
-                    <p><Translate content="sync_fail.sub_text_2" /></p>
+                    <p><Translate unsafe content="sync_fail.sub_text_2" /></p>
                 </div>
                 <div className="grid-container text-center" style={{paddingTop: "1rem", maxWidth: "40rem"}}>
                 <section className="block-list">

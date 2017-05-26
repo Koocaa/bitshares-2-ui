@@ -6,6 +6,7 @@ import Translate from "react-translate-component";
 import WebsocketAddModal from "./Settings/WebsocketAddModal";
 import SettingsActions from "actions/SettingsActions";
 import {Apis} from "bitsharesjs-ws";
+import counterpart from "counterpart";
 
 class InitError extends React.Component {
 
@@ -36,7 +37,11 @@ class InitError extends React.Component {
 
     render() {
         let options = this.props.apis.map(entry => {
-            return <option key={entry.url} value={entry.url}>{entry.location || entry.url} {entry.location ? `(${entry.url})` : null}</option>;
+            let onlyDescription = entry.url.indexOf("fake.automatic-selection") !== -1;
+            let {location} = entry;
+            if (location && typeof location === "object" && "translate" in location) location = counterpart.translate(location.translate);
+
+            return <option key={entry.url} value={entry.url}>{location || entry.url} {!onlyDescription && location ? `(${entry.url})` : null}</option>;
         });
 
         return (
@@ -66,7 +71,7 @@ class InitError extends React.Component {
                                     </div>
                                 </li>
                                 <li className="key-value clearfix">
-                                    <div className="float-left">Connection Status</div>
+                                    <div className="float-left"><Translate content="init_error.ws_status" /></div>
                                     <div className="float-right">
                                         {this.props.rpc_connection_status === "open" ? <span className="txtlabel success"><Translate content={`init_error.connected`} /></span> : <span className="txtlabel warning"><Translate content={`init_error.not_connected`} /></span>}
                                     </div>

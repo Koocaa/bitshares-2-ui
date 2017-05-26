@@ -1,4 +1,183 @@
 ---------------------------------------------------------------------
+Release 2.0.170327
+---------------------------------------------------------------------
+New features
+--------
+- Allow the mini depth chart to be hidden by the user
+- Refactor the MyMarkets component, 'show star only' and revamped search
+- Display up to 20 rows of the orderbook by default instead of 10
+- Add Trade and Borrow links to the default assets in AccountOverview
+
+Bug fixes
+--------
+- Fix an issue with blocktrades deposit addresses being set incorrectly
+- Change positioning of some tooltips
+- Fix password score checker freezing on very long passwords
+- Hide 'something for nothing order history items
+- Update bitsharesjs to fix proposals array undefined error
+- Fix 'Cannot use 'in' operator to search for 'translate'' error in api dropdown
+- Fix order rounding when modifying the 'Total' after clicking an order from the orderbook
+- Improve first-time brainkey lookup to check at least 10 positions
+- Log pub keys when creating a new account
+- Fix some Account permissions css issues and add some loggin
+- Also check if generated active key matches owner key and vice versa
+- Fix account create with faucet not rejecting errors properly
+- Fix password strength meter turning red for long passwords
+- Fix gateway actions in progress return
+---------------------------------------------------------------------
+Release 2.0.170327
+---------------------------------------------------------------------
+New features
+--------
+- Add password based login using account+role+password as private key seed
+- Add a Migration option to add password based keys to an existing account
+- Add password strength checker to password input
+- Update account creation using password login method
+- Use AccountImage in header instead of User icon
+- Add language selection dropdown with flag symbols to Header
+- Add a 'Quick buy' modal for blocktrades bridge deposit requests
+- Add blocktrades bridge deposits to the Exchange Buy/Sell box
+- Make OPEN.X trade links default to X_USD pair
+- Add CSP policies for improved security
+- Allow users to disable auto-lock by setting timeout to 0
+- Include OPEN.DASH as one of the default assets available for deposits
+- Restore the small depth chart
+- Move the 'borrow X' buttons to the Buy/Sell boxes
+
+Bug fixes
+--------
+- Add a wallet creation link to WalletUnlockModal
+- Fix some missing translation
+- Ensure all href links have window.opener clobbered
+- Remove TCNY deposits
+- Add vesting_balance_withdraw to ProposedOperation.jsx
+- Fix the calling of calcMarketStats in onSubscribeMarket
+- Improve how low volume markets are determined, add OPEN.DASH
+- Fix some pricechart resizing issues, put all controls on the same line
+- Tweak the dropdown css
+- Improve the price calculation of getMarketStats
+- Add missing translation of deposit withdraw title
+- Refactor Create account layout, add some text
+- Fix some minor header and Chat issues
+- Add missing translation key for supposed scammer accounts
+- Fix some possible issues in BlocktradesMethods and WithdrawModalBlocktrades
+- Wrap localStorage 'get' in try/catch to catch parsing errors, fixes Deposit/Withdraw issues for some accounts
+- Adjust the xAxis range for depth charts with no bids but asks
+- Fix blocktrades dropdown colors
+- Make the openledger fiat registration open in a separate browser
+- Fix some minor issues in Header and WithdrawModal
+- Fix transfer asset selection dropdown not showing more than 9 assets
+- Adjust the positioning of the cog header dropdown
+- Remove the borders in the electron header navigation buttons
+- Use default cursor to indicate account is not clickable with 1 account
+- Fix error when clicking on Header account with only 1 account present
+
+---------------------------------------------------------------------
+Release 2.0.170314
+---------------------------------------------------------------------
+New features
+--------
+- Make the account dropdown a direct link when only one account is present
+- Add a 'choose automatically' option for API server selection.
+- Add tooltips for bitassets, open.x and trade.x assets
+- Add 'to' account to deposit/withdraw summary, and show full asset name
+- Add several markets to dashboard list, filter out low volume markets
+- Implement some design ideas from @etherdesign
+- Refactor Transfer page, add new asset dropdown
+- Refactor AccountLeftPanel using etherdesign's designs
+- Increase max. KAPITAL withdraw limit to 100k
+- Improve the determination of low volume markets
+- Refactor DepositWithdraw layout according to design by @etherdesign
+- Add a dropdown to AccountSelector, use it in Transfer to show your accounts in From field
+- Change Tabs styling to use segmented button class
+- Modify the switch colors to make it very clear what's the checked state
+- Update the header account link behaviour to always switch the active account, add notification
+- Make the header balance value depend on the active account
+- Put Explore, Help and Settings behind a dropdown using the cog icon
+- Move the price chart controls below the chart itself
+- Fetch 3x as much data for price charts
+
+Bug fixes
+--------
+- Make event listeners passive, ensure removal
+- Add theme as query param to BitKapital iframe urls
+- Improve MarketCard shouldComponentUpdate logic
+- Improve the borders and display of market cards in the Dashboard
+- Fix top markets list disappearing due to low volume check
+- Rename 'pay' to 'send to
+- Sort call orders by id for consistent sort in CollateralPosition
+- Move the date in the operation list to a third column
+- Always set the 'from' account in Transfer.jsx
+- Fix account registration without referral id
+- Fix KAPITAL:OPEN.BTC price display in dashboard
+- Fix BuySell input style after Transfer refactor
+- Improve the Identicon question mark color
+- Include accounts with partial authority in list of my accounts
+- Only render mobileMenu on small screens
+- Filter Blocktrades backed coins by active wallets
+- Fix Exchange balance check
+- Fix BuySell balance asset construction
+- Fix withdrawal modal input check for amounts < 0
+- Fix fee subtraction in BuySell
+- Fix removal of ws api nodes in WebSocketAddModal
+- Persist backedCoins in localStorage
+- Persist map of low volume markets
+
+---------------------------------------------------------------------
+Release 2.0.170303
+---------------------------------------------------------------------
+New features
+--------
+- API node hopping: fallback to next API server if current API is down
+- API latency checks: all known API servers are regularly polled for latency, the ranking is used for fallback attempts
+- Notifications for confirmed transactions instead of second OK button
+- Big Russian language update
+- Delay Chat component appearance, default user name is now the first account in the user's wallet
+- Add empty input warning to WithdrawModalBlocktrades
+- Persist BlockTradesGateway deposit/withdraw setting
+
+Bug fixes
+--------
+- Remove redirect from / to /dashboard
+- Store referral account in localStorage, fixes account creation referrals
+- Fix brainkey sequence sync issues with account creation failure, add reset/decrement methods, resolve process_transaction properly on trx inclusion
+- Trigger account ref lookup immediately on AccountStore loadDbData, fixes slow Dashboard load
+- Fix for MyOrders incorrect amounts
+- Fix Exchange insufficient funds message
+- Fix order cancellations not updating properly
+- Filter out OPEN.X coins that are currently unavailable from preset list
+- Modify app init Chain to better handle sync error redirects
+- Add missing getFee method for SimpleDepositWithdraw
+
+---------------------------------------------------------------------
+Release 2.0.170224
+---------------------------------------------------------------------
+New features
+--------
+- New modal for quick deposit/withdraw of OPEN.X assets on account overview page
+- A set of default assets are available for deposits on the account overview page
+- New summary of open orders on account overview page
+- Set precision for bitCNY and bitUSD to 5 in orderbook display
+- Flip CNY:OPEN.BTC market in dashboard
+- Add bitSilver asset icon
+- Add Chinese intro text by bitcrab
+- Add grid lines and y axis labels to the depth chart
+
+Bug fixes
+--------
+- Fix Popover links so they work within the router context
+- Update react-router to v3.0.2
+- Refactor blockTrades withdrawal address caching
+- Scroll orderbook to top when changing markets
+- Don't set feed price in MarketStore for markets without call orders
+- Fix setting of highestBid in MarketStore
+- Update bitsharesjs, fixes vesting balances not loading properly
+- Fix persistence of indicator settings
+- Fix PriceChart resize on switching to/from left orderbook
+- Update Dashboard markets, add loading indication until accounts are ready
+- Fix Operation display of asset_global_settle operation
+
+---------------------------------------------------------------------
 Release 2.0.170215
 ---------------------------------------------------------------------
 New features
